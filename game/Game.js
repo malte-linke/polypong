@@ -5,15 +5,37 @@ module.exports = class Game {
     this.players = [];
 
     this.phase = "lobby";
+    
   }
 
 
-  startGame(){
+  start(){
 
+  }
+
+
+  close(){
+    //TODO: kick every player and send server close message
+//TODO: maybe give reason to what happened to other players
   }
 
 
   handlePlayerInput(){
 
+  }
+
+
+  addPlayer(pID){
+    this.players.push({ pID });
+  }
+
+
+  removePlayer(pID){
+    
+    //TODO: implement host migration and only close if no host left
+    if(this.host == pID) return true; // Return if game should close
+       
+    this.players = this.players.filter(p => p.pID != pID);
+    return false;
   }
 }

@@ -34,8 +34,6 @@ function loop(){
   renderer.render(runData);
 }
 
-net.createGame("12345678");
-
 loop();
 
 

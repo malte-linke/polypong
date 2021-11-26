@@ -1,2 +1,2 @@
 cd ..\..\bin\nodeJS\
-.\node ..\..\src\gnop\bin\wwwwww
+.\node ..\..\src\polypong\bin\www
