@@ -25,7 +25,8 @@
 [![Product Name Screen Shot][product-screenshot]](https://polypong.xyz)
 -->
 <!-- ABOUT THE PROJECT -->
-## About Polypong
+
+## About Polypong (Still in development)
 
 Polypong is a modern adaptation of the classic retro game "Pong".
 It offers more than two player multiplayer made possible with a whole bunch of polygon math.
