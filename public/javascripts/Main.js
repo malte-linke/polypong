@@ -1,5 +1,21 @@
+
 const net = new NetworkManager();
 const renderer = new Renderer("canvas");
+//const ui = new UI();
+
+
+function loop(){
+  requestAnimationFrame(loop);
+  renderer.render();
+}
+
+loop();
+net.createGame();
+
+
+
+
+/*
 
 const playerSliderElem = document.querySelector("#amountPlayerSlider");
 
@@ -11,29 +27,4 @@ playerSliderElem.addEventListener("change", () => {
   }
 });
 
-
-
-let runData = {
-  players : [
-    { position: 0, size: 0.5, pID: 0 },
-    { position: 0.5, size: 0.5, pID: 1 },
-    { position: 1, size: 0.5, pID: 2 },
-  ],
-  balls : [
-    { 
-      position: {x: 0.5, y: 0.5} ,
-      radius: 0.01
-    } 
-  ],
-}
-
-
-function loop(){
-  requestAnimationFrame(loop);
-
-  renderer.render(runData);
-}
-
-loop();
-
-
+*/
