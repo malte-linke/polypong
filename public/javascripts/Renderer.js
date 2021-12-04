@@ -121,7 +121,7 @@ class Renderer {
   //
   // HELPER
   //
-  rotateCanvas(context, angle){
+  rotateCanvas(angle){
     this.ctx.translate(this.canvas.width/2, this.canvas.height/2);
     this.ctx.rotate(angle * Math.PI / 180);
     this.ctx.translate(-this.canvas.width/2, -this.canvas.height/2);
