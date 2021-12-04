@@ -1,7 +1,6 @@
 class NetworkManager {
   constructor() {
     this.socket = io();
-    this.pID = null;
 
     this.init();
   }
@@ -10,10 +9,11 @@ class NetworkManager {
   init(){
     this.socket.on('createResult', this.createResultHandler);
     this.socket.on('joinResult', this.joinResultHandler);
+    this.socket.on('runData', this.runDataHandler);
   }
 
 
-  sendInput(dir){
+  sendInput(dir){ 
     this.socket.emit('input', dir);
   }
 
@@ -32,7 +32,7 @@ class NetworkManager {
     this.socket.emit('leave');
   }
   
-  leaveGameHandler(result){
+  leaveResultHandler(result){
     
   }
 
@@ -44,4 +44,8 @@ class NetworkManager {
   createResultHandler(result){
     console.log("Game created succesfully " + result.gID);
   }
+
+  runDataHandler(runData){
+    renderer.setRunData(runData);
+  } 
 }
