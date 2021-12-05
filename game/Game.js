@@ -16,7 +16,6 @@ module.exports = class Game {
     };
   }
 
-
   update(){
     this.checkCollisions();
     this.applyVelocity();
@@ -92,6 +91,13 @@ module.exports = class Game {
 
           //b.velocity = {x: 0.01, y: -0.002};
         }
+      }
+
+
+      //check if out of bounds
+      if(b.position.x < 0 || b.position.x > 1 || b.position.y < 0 || b.position.y > 1){
+        b.position.x = 0.5;
+        b.position.y = 0.5;
       }
     });
   }
