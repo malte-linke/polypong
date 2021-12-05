@@ -75,8 +75,22 @@ module.exports = {
       return (r >= 0 && r <= 1) && (s >= 0 && s <= 1);
     },
 
+    areCircleLineIntersectingPredictive(line, circle, circleFuture) {
 
-    areCircleLineIntersecting: (x1, x2, y1, y2, px, py, radius) => {
+      if(this.areCircleLineIntersecting(line.x1, line.x2, line.y1, line.y2, circle.x, circle.y, circle.radius)) return true;
+
+      let linePointA = {x: line.x1, y: line.y1};
+      let linePointB = {x: line.x2, y: line.y2};
+
+      let circlePointA = {x: circle.x, y: circle.y};
+      let circlePointB = {x: circleFuture.x, y: circleFuture.y};
+
+      if(this.areLinesIntersecting(linePointA, linePointB, circlePointA, circlePointB)) return true;
+
+      return false;
+    },
+
+    areCircleLineIntersecting(x1, x2, y1, y2, px, py, radius) {
 
       let A = px - x1;
       let B = py - y1;

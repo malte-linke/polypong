@@ -16,6 +16,10 @@ module.exports = class Game {
         { position: 0, size: 1, velocity: 0, pID: 1 },
         { position: 0, size: 1, velocity: 0, pID: 2 },
         { position: 0, size: 1, velocity: 0, pID: 0 },
+        { position: 0, size: 1, velocity: 0, pID: 2 },
+        { position: 0, size: 1, velocity: 0, pID: 0 },
+        { position: 0, size: 1, velocity: 0, pID: 2 },
+        { position: 0, size: 1, velocity: 0, pID: 0 },
       ],
       balls : [
         { 
@@ -29,10 +33,8 @@ module.exports = class Game {
 
 
   update(){
-
     this.checkCollisions();
     this.applyVelocity();
-    
   }
 
   applyVelocity(){
@@ -63,36 +65,30 @@ module.exports = class Game {
     let polygonVertices = PMath.getPolygonVertices(this.runData.players.length, 0.5);
     let playerVertices = PMath.getPlayerRectVertices(this.runData.players);
 
+    // get future player run data
+    let playerRunData = Objects.clone(this.runData.players); 
+    playerRunData.forEach(player => {
+      player.position += player.velocity * this.playerSpeed;
+    });
+
+    let playerVerticesFuture = PMath.getPlayerRectVertices(playerRunData);
+
 
     this.runData.balls.forEach(b => {    
 
-      //get future ball position
-      let bPos = { x: b.position.x, y: b.position.y };
-      let bPosFuture = {x: b.position.x + b.velocity.x, y: b.position.y + b.velocity.y};
+      let ball = {x: b.position.x, y: b.position.y, radius: b.radius};
+      let ballFuture = {x: b.position.x + b.velocity.x, y: b.position.y + b.velocity.y, radius: b.radius};
 
-      
       //check if intersects with player
-      for(let i = 0; i < playerVertices.length; i+=4){
+      while(playerVertices.length > 0){
 
-        //console.log(`Checked for player ${i/4}`);
-
-        // get future player run data
-        let playerRunData = Objects.clone(this.runData.players); 
-        playerRunData.forEach(player => {
-          player.position += player.velocity * this.playerSpeed;
-        });
+        // get only vertices for current player being checked
+        let currentPlayerVertices = playerVertices.splice(0, 4);
+        let currentPlayerVerticesFuture = playerVerticesFuture.splice(0, 4);
         
-
-        // get current and future player and ball locations
-        let rectVertices = [playerVertices[i], playerVertices[i+1], playerVertices[i+2], playerVertices[i+3]];
-        let rectVerticesFuture = PMath.getPlayerRectVertices(playerRunData);
-        rectVerticesFuture = [rectVerticesFuture[i], rectVerticesFuture[i+1], rectVerticesFuture[i+2], rectVerticesFuture[i+3]];
-        let circle = {x: b.position.x, y: b.position.y, radius: b.radius};
-        let circleFuture = {x: b.position.x + b.velocity.x, y: b.position.y + b.velocity.y, radius: b.radius};
-
-        if(Collision.areCircleRectIntersectingPredictive(rectVertices, rectVerticesFuture, circle, circleFuture)){  
+        if(Collision.areCircleRectIntersectingPredictive(currentPlayerVertices, currentPlayerVerticesFuture, ball, ballFuture)){  
           // set ball velocity to reflect off player
-          b.velocity = Vec2.getReflectionVector(b.velocity, Vec2.subtract(playerVertices[i+1], playerVertices[i]));
+          b.velocity = Vec2.getReflectionVector(b.velocity, Vec2.subtract(currentPlayerVertices[1], currentPlayerVertices[0]));
           return;
         }
       }
@@ -103,11 +99,13 @@ module.exports = class Game {
         let vertex = polygonVertices[i];
         let nextVertex = (i == polygonVertices.length - 1) ? polygonVertices[0] : polygonVertices[i+1];
 
-        if(Collision.areCircleLineIntersecting(vertex.x, nextVertex.x, vertex.y, nextVertex.y, bPos.x, bPos.y, b.radius)){
+        let line = {x1: vertex.x, y1: vertex.y, x2: nextVertex.x, y2: nextVertex.y};
+
+        if(Collision.areCircleLineIntersectingPredictive(line, ball, ballFuture)){
           b.position.x = 0.5;
           b.position.y = 0.5;
 
-          b.velocity = {x: 0.01, y: -0.002};
+          //b.velocity = {x: 0.01, y: -0.002};
         }
       }
     });
