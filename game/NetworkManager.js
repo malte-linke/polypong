@@ -128,8 +128,11 @@ class NetworkManager {
     //add host to game
     this.joinGameHandler(socket, gID, true);
   }
-  //TODO: only one player instance can join
+  
   joinGameHandler(socket, gID, isHost){
+
+    // check if player already in game
+    if(socket.gID != null && !isHost) return socket.emit("joinResult", { successful: false, reason: "Already in a game" });
     
     //get game instance
     let game = this.getGameByID(gID);
