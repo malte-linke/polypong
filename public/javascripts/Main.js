@@ -1,7 +1,7 @@
 
 const net = new NetworkManager();
 const renderer = new Renderer("canvas");
-//const ui = new UI();
+const ui = new UI();
 
 
 function loop(){
@@ -10,7 +10,7 @@ function loop(){
 }
 
 loop();
-net.createGame();
+
 
 
 

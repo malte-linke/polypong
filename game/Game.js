@@ -11,23 +11,8 @@ module.exports = class Game {
     this.phase = "lobby";
 
     this.runData = {
-      players : [
-        { position: 0, size: 1, velocity: 0, pID: 0 },
-        { position: 0, size: 1, velocity: 0, pID: 1 },
-        { position: 0, size: 1, velocity: 0, pID: 2 },
-        { position: 0, size: 1, velocity: 0, pID: 0 },
-        { position: 0, size: 1, velocity: 0, pID: 2 },
-        { position: 0, size: 1, velocity: 0, pID: 0 },
-        { position: 0, size: 1, velocity: 0, pID: 2 },
-        { position: 0, size: 1, velocity: 0, pID: 0 },
-      ],
-      balls : [
-        { 
-          position: {x: 0.5, y: 0.5} ,
-          velocity: {x: 0.08, y: -0.02},
-          radius: 0.01
-        } 
-      ],
+      players : [],
+      balls : [],
     };
   }
 
@@ -140,6 +125,14 @@ module.exports = class Game {
     if(isHost) this.host = { pID };
     else this.players.push({ pID })
     this.runData.players.push({ position: 0.25, size: 0.25, velocity: 0, pID });
+
+    if(this.players.length + 1 == 3){
+      this.runData.balls.push({ 
+        position: {x: 0.5, y: 0.5} ,
+        velocity: {x: 0.01, y: -0.0025},
+        radius: 0.01
+      });
+    }
   }
 
 

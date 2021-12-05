@@ -1,124 +1,134 @@
 class UI{
-  constructor(){
+  constructor(net){
     this.hostBtn = document.querySelector('.btn-host');
     this.joinBtn = document.querySelector('.btn-join');
     this.joinInput = document.querySelector('.input-join');
     this.backBtn = document.querySelector('.btn-back');
     this.gameStatusText = document.querySelector('.game-status-text');
+    this.canvasContainer = document.querySelector(".canvas-container");
 
     this.pregameUIContainer = document.querySelector(".pregame-ui-container");
 
     this.currentState = "landing";
 
-    this.joinBtn.addEventListener('click', (e) => this.joinBtnHandler(e));
-    this.hostBtn.addEventListener('click', this.hostBtnHandler);
-    this.backBtn.addEventListener('click', this.backBtnHandler);
+    this.joinBtn.addEventListener('click', this.joinBtnHandler.bind(this));
+    this.hostBtn.addEventListener('click', this.hostBtnHandler.bind(this));
+    this.backBtn.addEventListener('click', this.backBtnHandler.bind(this));
 
-    console.log(this.joinBtn);
+    this.net = net;
   }
 
   joinBtnHandler(e){
-    console.log("t");
-    if(currentState == "landing") setNameState("join");
-    else if(currentState == "name-join") setJoinState();
-    else if(currentState == "name-host") setHostState();
-    else if(currentState == "join") findGame(joinInput.value);
+    if(this.currentState == "landing") this.setNameState("join");
+    else if(this.currentState == "name-join") this.setJoinState();
+    else if(this.currentState == "name-host") this.setHostState();
+    else if(this.currentState == "join") this.findGame(this.joinInput.value);
+    else if(this.currentState == "host") this.hostGame();
   }
 
   hostBtnHandler(e){
-    if(currentState == "landing") setNameState("host");
+    if(this.currentState == "landing") this.setNameState("host");
   }
 
   backBtnHandler(){
-    setLandingState();
+    this.setLandingState();
   }
 
   findGame(gID){
     net.joinGame(gID);
   }
-  
+
+  hostGame(){
+    net.createGame();
+  }
   
   setLandingState(){
-    hostBtn.style.display = "inline";
-    joinInput.style.display = "none";
-    joinBtn.style.margin = "0 5vw 0 5vw";
-    backBtn.style.display = "none";
-    gameStatusText.style.visibility = "hidden";
-    joinBtn.innerHTML = "Join";
-    hostBtn.innerHTML = "Host";
-    currentState = "landing";
+    this.hostBtn.style.display = "inline";
+    this.joinInput.style.display = "none";
+    this.joinBtn.style.margin = "0 5vw 0 5vw";
+    this.backBtn.style.display = "none";
+    this.gameStatusText.style.visibility = "hidden";
+    this.joinBtn.innerHTML = "Join";
+    this.hostBtn.innerHTML = "Host";
+    this.currentState = "landing";
   }
   
   setNameState(suffix){
-    hostBtn.style.display = "none";
-    joinInput.style.display = "inline";
-    joinBtn.style.margin = "0 5vw 0 0";
-    backBtn.style.display = "inline";
+    this.hostBtn.style.display = "none";
+    this.joinInput.style.display = "inline";
+    this.joinBtn.style.margin = "0 5vw 0 0";
+    this.backBtn.style.display = "inline";
   
-    joinInput.placeholder = "Enter Username";
-    joinInput.value = getCookie("username");
-    joinBtn.innerHTML = "Submit";
+    this.joinInput.placeholder = "Enter Username";
+    this.joinInput.value = Cookies.get("username");
+    this.joinBtn.innerHTML = "Submit";
   
-    currentState = "name-" + suffix;
+    this.currentState = "name-" + suffix;
   }
   
   setJoinState(){
   
-    if(joinInput.value.length < 4){
-      gameStatusText.innerHTML = "Name Is Too Short";
-      gameStatusText.style.visibility = "visible";
+    if(this.joinInput.value.length < 4){
+      this.gameStatusText.innerHTML = "Name Is Too Short";
+      this.gameStatusText.style.visibility = "visible";
       return;
     }
     
-    gameStatusText.style.visibility = "hidden";
+    this.gameStatusText.style.visibility = "hidden";
+
+    Cookies.set("username", this.joinInput.value, 1);
   
-    setCookie("username", joinInput.value, 1);
+    this.hostBtn.style.display = "none";
+    this.joinInput.style.display = "inline";
+    this.joinBtn.style.margin = "0 5vw 0 0";
+    this.backBtn.style.display = "inline";
   
-    hostBtn.style.display = "none";
-    joinInput.style.display = "inline";
-    joinBtn.style.margin = "0 5vw 0 0";
-    backBtn.style.display = "inline";
+    this.joinInput.placeholder = "Enter room code";
+    this.joinInput.value = "";
+    this.joinBtn.innerHTML = "Join";
   
-    joinInput.placeholder = "Enter room code";
-    joinInput.value = "";
-    joinBtn.innerHTML = "Join";
-  
-    currentState = "join";
+    this.currentState = "join";
   }
   
   setHostState(){
   
-    if(joinInput.value.length < 4){
-      gameStatusText.innerHTML = "Name Is Too Short";
-      gameStatusText.style.visibility = "visible";
+    if(this.joinInput.value.length < 4){
+      this.gameStatusText.innerHTML = "Name Is Too Short";
+      this.gameStatusText.style.visibility = "visible";
       return;
     }
     
-    gameStatusText.style.visibility = "hidden";
+    this.gameStatusText.style.visibility = "hidden";
   
-    setCookie("username", joinInput.value, 1);
+    Cookies.set("username", this.joinInput.value, 1);
   
-    hostBtn.style.display = "none";
-    joinInput.style.display = "inline";
-    joinBtn.style.margin = "0 5vw 0 0";
-    backBtn.style.display = "inline";
+    this.hostBtn.style.display = "none";
+    this.joinInput.style.display = "inline";
+    this.joinBtn.style.margin = "0 5vw 0 0";
+    this.backBtn.style.display = "inline";
   
-    joinInput.placeholder = "Enter Lobby Name";
-    joinInput.value = "";
-    joinBtn.innerHTML = "Host";
+    this.joinInput.placeholder = "Enter Lobby Name";
+    this.joinInput.value = "";
+    this.joinBtn.innerHTML = "Host";
   
-    currentState = "host";
+    this.currentState = "host";
   }
   
   setGameFoundState(){
-    gameStatusText.style.visibility = "visible";
-    gameStatusText.innerHTML = "Joining game...";
+    this.gameStatusText.style.visibility = "visible";
+    this.gameStatusText.innerHTML = "Joining game...";
     //TODO: after server response and game found
-    gameStatusText.innerHTML = "Game Found!";
+    this.gameStatusText.innerHTML = "Game Found!";
   
-    joinInput.placeholder = "Enter Username";
+    this.joinInput.placeholder = "Enter Username";
   
-    currentState = "gameFound";
+    this.currentState = "gameFound";
+  }
+
+  setLobbyState(){
+    this.pregameUIContainer.style.display = "none";
+    this.canvasContainer.style.display = "grid";
+    this.currentState = "lobby";
   }
 }
 

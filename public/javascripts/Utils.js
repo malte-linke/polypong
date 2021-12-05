@@ -1,5 +1,5 @@
 const Cookies = {
-  get: (cname) => {
+  get (cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(';');
@@ -16,7 +16,7 @@ const Cookies = {
   },
   
   
-  set: (cname, cvalue, exyears) => {
+  set (cname, cvalue, exyears) {
     let d = new Date();
     d.setTime(d.getTime() + (exyears*24*60*60*1000*365));
     let expires = "expires="+ d.toUTCString();

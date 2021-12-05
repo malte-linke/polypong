@@ -6,8 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/stylesheets/index.css">
-  <script defer src="/javascripts/ui.js"></script>
+  <script src="/javascripts/socketio.js"></script>
   <script src="/javascripts/Utils.js"></script>
+  <script src='/javascripts/NetworkManager.js'></script>
+  <script src='/javascripts/Renderer.js'></script>
+  <script src='/javascripts/Input.js'></script>
+  <script defer src="/javascripts/ui.js"></script>
+  <script defer src="/javascripts/main.js"></script>
 </head>
 <body>
   <div class="pregame-ui-container">
@@ -28,6 +33,9 @@
     <div class="btn-container">
       <button class="btn-back">BACK</button>
     </div>
+  </div>
+  <div class="canvas-container">
+    <canvas id="canvas"></canvas>
   </div>
 </body>
 </html>
