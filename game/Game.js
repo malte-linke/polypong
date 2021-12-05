@@ -1,7 +1,7 @@
 const { Collision, PMath, Vec2, Objects } = require('./Utils.js');
 
 module.exports = class Game {
-  constructor(gID, host = null){ //TODO: implement host
+  constructor(gID, host){
     this.gID = gID;
     this.host = host;
     this.players = [];
@@ -58,7 +58,7 @@ module.exports = class Game {
     let playerVerticesFuture = PMath.getPlayerRectVertices(playerRunData);
 
 
-    this.runData.balls.forEach(b => {    
+    this.runData.balls.forEach(b => {   
 
       let ball = {x: b.position.x, y: b.position.y, radius: b.radius};
       let ballFuture = {x: b.position.x + b.velocity.x, y: b.position.y + b.velocity.y, radius: b.radius};
@@ -72,7 +72,9 @@ module.exports = class Game {
         
         if(Collision.areCircleRectIntersectingPredictive(currentPlayerVertices, currentPlayerVerticesFuture, ball, ballFuture)){  
           // set ball velocity to reflect off player
+          if(b.inPlatform) return;
           b.velocity = Vec2.getReflectionVector(b.velocity, Vec2.subtract(currentPlayerVertices[1], currentPlayerVertices[0]));
+          b.inPlatform = true;
           return;
         }
       }
@@ -88,8 +90,7 @@ module.exports = class Game {
         if(Collision.areCircleLineIntersectingPredictive(line, ball, ballFuture)){
           b.position.x = 0.5;
           b.position.y = 0.5;
-
-          //b.velocity = {x: 0.01, y: -0.002};
+          return;
         }
       }
 
@@ -99,6 +100,8 @@ module.exports = class Game {
         b.position.x = 0.5;
         b.position.y = 0.5;
       }
+
+      b.inPlatform = false;
     });
   }
 
