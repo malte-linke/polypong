@@ -1,9 +1,8 @@
 const { Collision, PMath, Vec2, Objects } = require('./Utils.js');
 
 module.exports = class Game {
-  constructor(gID, host){
+  constructor(gID){
     this.gID = gID;
-    this.host = host;
     this.players = [];
 
     this.playerSpeed = 0.02; 
@@ -130,12 +129,12 @@ module.exports = class Game {
   }
 
 
-  addPlayer(pID, isHost){
-    if(isHost) this.host = { pID };
-    else this.players.push({ pID })
+  addPlayer(pID){
+    if(this.players.length <= 0) this.players.push({ pID, isHost: true });
+    else this.players.push({ pID, isHost: false });
     this.runData.players.push({ position: 0.25, size: 0.25, velocity: 0, pID });
 
-    if(this.players.length + 1 == 3){
+    if(this.players.length == 3){
       this.runData.balls.push({ 
         position: {x: 0.5, y: 0.5} ,
         velocity: {x: 0.01, y: -0.0025},
@@ -148,10 +147,16 @@ module.exports = class Game {
   removePlayer(pID){
     
     //TODO: implement host migration and only close if no host left
-    if(this.host == pID) return true; // Return if game should close
        
     this.players = this.players.filter(p => p.pID != pID);
     this.runData.players = this.runData.players.filter(p => p.pID != pID);
+
+    // remove ball if less than 3 players left
+    if(this.players.length < 3) this.runData.balls = [];
+
+    // Return if game should close
+    if(this.players.length <= 0) return true; 
+    if(this.players.find(p => p.isHost) == undefined) return true; 
     return false;
   }
 }

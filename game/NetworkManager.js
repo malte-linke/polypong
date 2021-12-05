@@ -37,7 +37,7 @@ class NetworkManager {
     this.server.on('connection', (socket) => {
       this.auth(socket);
       
-      socket.on("join", (data) => this.joinGameHandler(socket, data, false));
+      socket.on("join", (data) => this.joinGameHandler(socket, data));
       socket.on("leave", (data) => this.leaveGameHandler(socket, data));
       socket.on("create", (data) => this.createGameHandler(socket, data));
       socket.on("disconnect", (data) => this.disconnectHandler(socket, data));
@@ -66,12 +66,17 @@ class NetworkManager {
 
       let runData = g.getRunData();
 
-      let host = this.getSocketByID(g.host.pID);
       let players = g.players.map(p => this.getSocketByID(p.pID));
       
-      try{ //TODO: find better solution 
-        host.emit("runData", runData);
-        players.forEach(p => p.emit("runData", runData));
+      //try catch in case player disconnects
+      try{
+        players.forEach(p => {
+          // set your own pID to "you"
+          let currentPlayer = runData.players.find(_p => _p.pID == p.pID);
+          currentPlayer.pID = "you";
+          p.emit("runData", runData);
+          currentPlayer.pID = p.pID;
+        });
       }catch(e){}
     });
   }
@@ -98,6 +103,8 @@ class NetworkManager {
     if(!game.players.map(p => p.pID).includes(socket.pID) && game.host != socket.pID) return socket.gID = null;
     let shouldClose = game.removePlayer(socket.pID);
 
+    socket.gID = null;
+
     console.log(`[~] Player-${socket.pID} --> X`);
 
     //close if host left (for now)
@@ -116,9 +123,7 @@ class NetworkManager {
     }
 
     //instanciate game
-    this.games.push(new game(gID, socket.pID));
-
-    socket.gID = gID;
+    this.games.push(new game(gID));
 
     // send gameID to player
     socket.emit("createResult", { successful: true, gID });
@@ -126,13 +131,13 @@ class NetworkManager {
     console.log("[+] Game-" + gID);
 
     //add host to game
-    this.joinGameHandler(socket, gID, true);
+    this.joinGameHandler(socket, gID);
   }
-  
-  joinGameHandler(socket, gID, isHost){
+
+  joinGameHandler(socket, gID){
 
     // check if player already in game
-    if(socket.gID != null && !isHost) return socket.emit("joinResult", { successful: false, reason: "Already in a game" });
+    if(socket.gID != null) return socket.emit("joinResult", { successful: false, reason: "Already in a game" });
     
     //get game instance
     let game = this.getGameByID(gID);
@@ -140,7 +145,7 @@ class NetworkManager {
       return socket.emit("joinResult", { successful: false, reason: "Game does not exist" });
     }
 
-    game.addPlayer(socket.pID, isHost);
+    game.addPlayer(socket.pID);
 
     //set gID to game 
     socket.gID = gID;
@@ -148,7 +153,7 @@ class NetworkManager {
     // send result to player
     socket.emit("joinResult", { successful: true });
 
-    if(isHost) return console.log(`[~HOST] Player-${socket.pID} --> Game-${gID}`);
+    if(game.players.length == 1) return console.log(`[~HOST] Player-${socket.pID} --> Game-${gID}`);
     console.log(`[~PLAYER] Player-${socket.pID} --> Game-${gID}`);
   }
 
