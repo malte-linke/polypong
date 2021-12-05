@@ -1,6 +1,6 @@
 const { io } = require('socket.io-client');
 var game = require('./Game');
-var { ID } = require('./utils');
+var { ID } = require('./Utils');
 
 var server = null;
 
