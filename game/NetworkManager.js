@@ -121,7 +121,7 @@ class NetworkManager {
 
     //close if host left (for now)
     if(shouldClose){
-      this.games = this.games.filter(g => g.gID != socket.gID);
+      this.games = this.games.filter(g => g.gID != game.gID);
       game.runData.players.forEach(p => p.gID = null);
       console.log(`[-] Game ${game.gID} closed`);
     }
