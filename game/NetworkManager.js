@@ -88,13 +88,18 @@ class NetworkManager {
   //
 
   changeNameHandler(socket, name){
+
+    if(socket.pID == name) return socket.emit("changeNameResult", { successful: true });
+
     if(name.length < 4) 
       return socket.emit("changeNameResult", { successful: false, reason: "Name must be at least 4 characters long" });
+
+    if(this.players.map(p => p.pID).includes(name))
+      return socket.emit("changeNameResult", { successful: false, reason: "Name already taken" });
 
     console.log(`[#] Player ${socket.pID} changed name to ${name}`);
     socket.pID = name;
     socket.emit("changeNameResult", { successful: true });
-    
   }
 
   disconnectHandler(socket, _){
