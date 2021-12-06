@@ -95,17 +95,7 @@ class UI{
     this.backBtn.onclick = this.setLandingState.bind(this);
     this.joinBtn.onclick = () => net.createGame(this.joinInput.value);
   }
-  
-  setGameFoundState(){
-    this.gameStatusText.style.visibility = "visible";
-    this.gameStatusText.innerHTML = "Joining game...";
-    //TODO: after server response and game found
-    this.gameStatusText.innerHTML = "Game Found!";
-  
-    this.joinInput.placeholder = "Enter Username";
-  
-    this.currentState = "gameFound";
-  }
+
 
   setLobbyState(){
     this.pregameUIContainer.style.display = "none";
@@ -113,9 +103,38 @@ class UI{
     this.currentState = "lobby";
   }
 
+
   changeNameResult(result){
+    this.gameStatusText.style.visibility = "hidden";
+
+    if(!result.successful){
+      this.gameStatusText.innerHTML = result.reason;
+      this.gameStatusText.style.visibility = "visible";
+      return;
+    }
+
     if(this.currentState == "name-join") this.setJoinState();
     else if(this.currentState == "name-host") this.setHostState();
+  }
+
+  joinGameResult(result){
+    if(!result.successful){
+      this.gameStatusText.innerHTML = result.reason;
+      this.gameStatusText.style.visibility = "visible";
+      return;
+    }
+
+    this.setLobbyState();
+  }
+
+  hostGameResult(result){
+    if(!result.successful) {
+      this.gameStatusText.innerHTML = result.reason;
+      this.gameStatusText.style.visibility = "visible";
+      return;
+    }
+
+    this.setLobbyState();
   }
 }
 

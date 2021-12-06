@@ -131,10 +131,10 @@ class NetworkManager {
 
     // check if id is valid
     if(this.games.map(g => g.gID).includes(gID)) 
-      return socket.emit("createResult", { successful: false, reason: "Game ID already taken" });
+      return socket.emit("createResult", { successful: false, reason: "Lobby name already taken" });
 
     if(gID.length < 4) 
-      return socket.emit("createResult", { successful: false, reason: "Game ID must be at least 4 characters long" });
+      return socket.emit("createResult", { successful: false, reason: "Lobby name must be at least 4 characters long" });
     
 
     //instanciate game
@@ -152,12 +152,12 @@ class NetworkManager {
   joinGameHandler(socket, gID){
 
     // check if player already in game
-    if(socket.gID != null) return socket.emit("joinResult", { successful: false, reason: "Already in a game" });
+    if(socket.gID != null) return socket.emit("joinResult", { successful: false, reason: "Already in a game. How did u even do this?" });
     
     //get game instance
     let game = this.getGameByID(gID);
     if(game == undefined) {
-      return socket.emit("joinResult", { successful: false, reason: "Game does not exist" });
+      return socket.emit("joinResult", { successful: false, reason: "Game not found" });
     }
 
     game.addPlayer(socket.pID);

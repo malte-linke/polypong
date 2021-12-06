@@ -25,9 +25,7 @@ class NetworkManager {
   }
 
   joinResultHandler(result){
-    if(!result.successful) return console.log("Game join failed. Reason: " + result.reason);
-    console.log("Game joined succesfully");
-    ui.setLobbyState();
+    ui.joinGameResult(result);
   }
 
 
@@ -53,13 +51,7 @@ class NetworkManager {
   }
 
   createResultHandler(result){
-    if(!result.successful) {
-      console.log("Game creation failed. Reason: " + result.reason);
-      return;
-    }
-
-    ui.setLobbyState();
-    console.log("Game created succesfully " + result.gID);
+    ui.hostGameResult(result);
   }
 
   runDataHandler(runData){
