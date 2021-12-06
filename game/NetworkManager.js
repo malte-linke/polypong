@@ -100,7 +100,7 @@ class NetworkManager {
     if(game == undefined) return socket.gID = null;
 
     //check if player is in game
-    if(!game.players.map(p => p.pID).includes(socket.pID) && game.host != socket.pID) return socket.gID = null;
+    if(!game.runData.players.map(p => p.pID).includes(socket.pID) && game.host != socket.pID) return socket.gID = null;
     let shouldClose = game.removePlayer(socket.pID);
 
     socket.gID = null;
@@ -110,17 +110,22 @@ class NetworkManager {
     //close if host left (for now)
     if(shouldClose){
       this.games = this.games.filter(g => g.gID != socket.gID);
-      game.players.forEach(p => p.gID = null);
+      game.runData.players.forEach(p => p.gID = null);
       console.log("[-] Game-" + game.gID);
     }
   }
 
-  createGameHandler(socket, _){
-    // generate game ID
-    while(true){
-      var gID = ID.genID(8);
-      if(!this.games.map(g => g.gID).includes(gID)) break;
-    }
+  createGameHandler(socket, gID){
+
+    console.log(gID);
+
+    // check if id is valid
+    if(this.games.map(g => g.gID).includes(gID)) 
+      return socket.emit("createResult", { successful: false, reason: "Game ID already taken" });
+
+    if(gID.length < 4) 
+      return socket.emit("createResult", { successful: false, reason: "Game ID must be at least 4 characters long" });
+    
 
     //instanciate game
     this.games.push(new game(gID));

@@ -38,13 +38,18 @@ class NetworkManager {
   }
 
 
-  createGame(){
-    this.socket.emit('create');
+  createGame(gID){
+    this.socket.emit('create', gID);
   }
 
   createResultHandler(result){
-    console.log("Game created succesfully " + result.gID);
+    if(!result.successful) {
+      console.log("Game creation failed. Reason: " + result.reason);
+      return;
+    }
+
     ui.setLobbyState();
+    console.log("Game created succesfully " + result.gID);
   }
 
   runDataHandler(runData){

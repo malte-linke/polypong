@@ -23,7 +23,7 @@ class UI{
     else if(this.currentState == "name-join") this.setJoinState();
     else if(this.currentState == "name-host") this.setHostState();
     else if(this.currentState == "join") this.findGame(this.joinInput.value);
-    else if(this.currentState == "host") this.hostGame();
+    else if(this.currentState == "host") this.hostGame(this.joinInput.value);
   }
 
   hostBtnHandler(e){
@@ -38,8 +38,8 @@ class UI{
     net.joinGame(gID);
   }
 
-  hostGame(){
-    net.createGame();
+  hostGame(gID){
+    net.createGame(gID);
   }
   
   setLandingState(){
