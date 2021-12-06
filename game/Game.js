@@ -144,6 +144,15 @@ module.exports = class Game {
         lastCollision: null
       });
     }
+
+    if(this.runData.players.length == 5){
+      this.runData.balls.push({ 
+        position: {x: 0.5, y: 0.5} ,
+        velocity: {x: -0.008, y: 0.004},
+        radius: 0.01,
+        lastCollision: null
+      });
+    }
   }
 
 
