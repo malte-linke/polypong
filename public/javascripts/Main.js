@@ -10,21 +10,3 @@ function loop(){
 }
 
 loop();
-
-
-
-
-
-/*
-
-const playerSliderElem = document.querySelector("#amountPlayerSlider");
-
-playerSliderElem.addEventListener("change", () => {
-  let n = playerSliderElem.value;
-  runData.players = [];
-  for(let i = 0; i < n; i++){
-    runData.players.push({ position: 0.5, size: 0.4 });
-  }
-});
-
-*/

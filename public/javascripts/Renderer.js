@@ -22,13 +22,20 @@ class Renderer {
     this.ctx.fillStyle = "#222";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    //TODO: rotate so player is on bottom
+    if(this.runData == null || this.runData.players.length < 3) return;
+
+    //TODO: get rotation angle to place player at bottom
+
+
+    //this.rotateCanvas(rotationDeg);
 
     // draw
-    if(this.runData == null) return;
     this.drawMap(this.runData.players.length);
     this.drawBalls(this.runData.balls);
     this.drawPlayers(this.runData.players);
+
+    // reset rotation
+    //this.rotateCanvas(-rotationDeg);
   }
   
   drawMap(numPlayers){
@@ -63,44 +70,11 @@ class Renderer {
 
   drawPlayers(players){    
     this.ctx.fillStyle = "#fff";
-
     let vertices = getPlayerRectVertices(players, this.size);
 
     for(let i = 0; i < vertices.length; i+=4){
       this.drawRect(vertices[i], vertices[i+1], vertices[i+2], vertices[i+3]);
     }
-    
-    /*
-    this.ctx.fillStyle = "red";
-
-    vertices.forEach(vertex => {
-      this.ctx.beginPath();
-      this.ctx.arc(vertex.x, vertex.y, 5, 0, 2 * Math.PI);
-      this.ctx.fill();
-      this.ctx.closePath();
-    });
-    
-    */
-    /*
-    for(let i = 0; i < players.length; i++){
-
-      let playerHeightFactor = 30;
-
-      let playerSize = polygonSideLength * players[i].size;
-      let playerHeight =  polygonSideLength / playerHeightFactor;
-      let playerX = (players[i].position * polygonSideLength) + distanceToLeftPolygonVertex;
-      let playerY = (this.size / 2 - polygonSideDistance - (polygonSideLength / playerHeightFactor) / 2);
-      //TODO: fix rotation
-      this.ctx.fillStyle = "#fff";
-      this.ctx.fillRect(playerX, playerY, playerSize,playerHeight);
-
-      //console.log(playerX, playerY, playerSize,playerHeight);
-      
-      this.ctx.translate(this.canvas.width/2, this.canvas.height/2);
-      this.ctx.rotate(rotationDeg * Math.PI / 180);
-      this.ctx.translate(-this.canvas.width/2, -this.canvas.height/2);
-    }
-    */
   }
 
   
@@ -140,39 +114,3 @@ class Renderer {
     this.ctx.closePath();
   }
 }
-
-/*
-
-  let r = 0.5;
-  let n = numPlayers;
-
-  let vertices = getPolygonVertices(n, r, this.size);
-
-  let points = getTwoHighestVertices(vertices);
-
-  // get middle point between two highest vertices
-  let middlePoint = {
-    x: (points[0].x + points[1].x) / 2,
-    y: (points[0].y + points[1].y) / 2
-  };
-
-  // get vectors to calculate angle
-  let vec1 = {x: 0, y: 1};
-  let vec2 = {
-    x: middlePoint.x - this.size/2,
-    y: middlePoint.y - this.size/2
-  };
-
-  let rotationOffset = Vec2.getAngle(vec1, vec2);
-
-  // rotate canvas according to rotation offset to always get flat side up
-  //this.rotateCanvas(rotationOffset);
-
-
-    //DRAW ------------------------------
-
-
-  //rotate canvas back
-  //this.rotateCanvas(-rotationOffset);
-
-*/

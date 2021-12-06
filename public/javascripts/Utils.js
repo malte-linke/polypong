@@ -147,8 +147,6 @@ function getPolygonSideLength(r, n, canvasSize = -1){
 
 
 function getPolygonSideDistance(radius, numSides, canvasSize){
-  //return (radius * Math.acos(Math.PI/numSides)); 
-  //console.log(this.getPolygonSideLength(numSides, radius));
   return Math.sqrt(Math.pow(radius * canvasSize, 2) - Math.pow(this.getPolygonSideLength(radius, numSides) / 2, 2))
 }
 
