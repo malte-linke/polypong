@@ -66,7 +66,7 @@ class NetworkManager {
 
       let runData = g.getRunData();
 
-      let players = g.players.map(p => this.getSocketByID(p.pID));
+      let players = g.runData.players.map(p => this.getSocketByID(p.pID));
       
       //try catch in case player disconnects
       try{
@@ -153,7 +153,7 @@ class NetworkManager {
     // send result to player
     socket.emit("joinResult", { successful: true });
 
-    if(game.players.length == 1) return console.log(`[~HOST] Player-${socket.pID} --> Game-${gID}`);
+    if(game.runData.players.length == 1) return console.log(`[~HOST] Player-${socket.pID} --> Game-${gID}`);
     console.log(`[~PLAYER] Player-${socket.pID} --> Game-${gID}`);
   }
 
@@ -181,7 +181,7 @@ class NetworkManager {
 
   isPlayerInGame(pID, gID){
     let game = this.getGameByID(gID);
-    return game.players.map(p => p.pID).includes(pID) || game.host.pID == pID;
+    return game.runData.players.map(p => p.pID).includes(pID);
     //TODO: what about game exists
   }
 
