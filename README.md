@@ -52,8 +52,8 @@ It offers more than two player multiplayer made possible with a whole bunch of p
 <!-- GETTING STARTED -->
 ## Getting Started
 
-A live version of the game is running on https://polypong.xyz
-To get a local copy up and running follow these simple example steps.
+A live version of the game is running on https://polypong.xyz.
+To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
