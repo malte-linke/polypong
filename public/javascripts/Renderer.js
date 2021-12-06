@@ -8,6 +8,9 @@ class Renderer {
     window.addEventListener("resize", this.resize.bind(this));
 
     this.resize();
+
+
+    this.background = "black";
   }
 
   setRunData(runData){
@@ -19,7 +22,7 @@ class Renderer {
   //
   render(){
     // clear canvas
-    this.ctx.fillStyle = "#222";
+    this.ctx.fillStyle = this.background;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     if(this.runData == null || this.runData.players.length < 3) return;
