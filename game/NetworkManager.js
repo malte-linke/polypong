@@ -42,6 +42,7 @@ class NetworkManager {
       socket.on("create", (data) => this.createGameHandler(socket, data));
       socket.on("disconnect", (data) => this.disconnectHandler(socket, data));
       socket.on("input", (data) => this.inputHandler(socket, data));
+      socket.on("changeName", (data) => this.changeNameHandler(socket, data));
     });
   }
 
@@ -57,7 +58,7 @@ class NetworkManager {
 
     this.players.push(socket);
 
-    console.log("[+] Player-" + pID);
+    console.log(`[+] Player ${pID} connected`);
   }
 
   clockTick(){
@@ -85,13 +86,24 @@ class NetworkManager {
   //
   // Handlers
   //
+
+  changeNameHandler(socket, name){
+    if(name.length < 4) 
+      return socket.emit("changeNameResult", { successful: false, reason: "Name must be at least 4 characters long" });
+
+    console.log(`[#] Player ${socket.pID} changed name to ${name}`);
+    socket.pID = name;
+    socket.emit("changeNameResult", { successful: true });
+    
+  }
+
   disconnectHandler(socket, _){
 
     if(socket.gID != null) this.leaveGameHandler(socket, {});
 
     this.players = this.players.filter(p => p.pID != socket.pID);
     
-    console.log("[-] Player-" + socket.pID);
+    console.log(`[-] Player ${socket.pID} disconnected`);
   }
 
   leaveGameHandler(socket, _){
@@ -105,19 +117,17 @@ class NetworkManager {
 
     socket.gID = null;
 
-    console.log(`[~] Player-${socket.pID} --> X`);
+    console.log(`[~] Player ${socket.pID} left the game ${game.gID}`);
 
     //close if host left (for now)
     if(shouldClose){
       this.games = this.games.filter(g => g.gID != socket.gID);
       game.runData.players.forEach(p => p.gID = null);
-      console.log("[-] Game-" + game.gID);
+      console.log(`[-] Game ${game.gID} closed`);
     }
   }
 
   createGameHandler(socket, gID){
-
-    console.log(gID);
 
     // check if id is valid
     if(this.games.map(g => g.gID).includes(gID)) 
@@ -133,7 +143,7 @@ class NetworkManager {
     // send gameID to player
     socket.emit("createResult", { successful: true, gID });
 
-    console.log("[+] Game-" + gID);
+    console.log(`[+] Game ${gID} created`);
 
     //add host to game
     this.joinGameHandler(socket, gID);
@@ -158,8 +168,8 @@ class NetworkManager {
     // send result to player
     socket.emit("joinResult", { successful: true });
 
-    if(game.runData.players.length == 1) return console.log(`[~HOST] Player-${socket.pID} --> Game-${gID}`);
-    console.log(`[~PLAYER] Player-${socket.pID} --> Game-${gID}`);
+    if(game.runData.players.length == 1) return console.log(`[~HOST] Player ${socket.pID} joined Game ${gID}`);
+    console.log(`[~PLAYER] Player ${socket.pID} joined Game ${gID}`);
   }
 
   inputHandler(socket, dir){

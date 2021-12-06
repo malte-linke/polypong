@@ -10,6 +10,8 @@ class NetworkManager {
     this.socket.on('createResult', this.createResultHandler);
     this.socket.on('joinResult', this.joinResultHandler);
     this.socket.on('runData', this.runDataHandler);
+    this.socket.on('leaveResult', this.leaveResultHandler);
+    this.socket.on('changeNameResult', this.changeNameResultHandler);
   }
 
 
@@ -35,6 +37,14 @@ class NetworkManager {
   
   leaveResultHandler(result){
     
+  }
+
+  changeName(name){
+    this.socket.emit('changeName', name);
+  }
+
+  changeNameResultHandler(result){
+    ui.changeNameResult(result);
   }
 
 

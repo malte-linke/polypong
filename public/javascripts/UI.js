@@ -9,38 +9,19 @@ class UI{
 
     this.pregameUIContainer = document.querySelector(".pregame-ui-container");
 
-    this.currentState = "landing";
 
-    this.joinBtn.addEventListener('click', this.joinBtnHandler.bind(this));
-    this.hostBtn.addEventListener('click', this.hostBtnHandler.bind(this));
-    this.backBtn.addEventListener('click', this.backBtnHandler.bind(this));
-
-    this.net = net;
+    this.setLandingState();
   }
 
   joinBtnHandler(e){
     if(this.currentState == "landing") this.setNameState("join");
-    else if(this.currentState == "name-join") this.setJoinState();
-    else if(this.currentState == "name-host") this.setHostState();
+    else if(this.currentState == "name-join") this.setJoinState(this.joinInput.value);
+    else if(this.currentState == "name-host") this.setHostState(this.joinInput.value);
     else if(this.currentState == "join") this.findGame(this.joinInput.value);
     else if(this.currentState == "host") this.hostGame(this.joinInput.value);
   }
 
-  hostBtnHandler(e){
-    if(this.currentState == "landing") this.setNameState("host");
-  }
 
-  backBtnHandler(){
-    this.setLandingState();
-  }
-
-  findGame(gID){
-    net.joinGame(gID);
-  }
-
-  hostGame(gID){
-    net.createGame(gID);
-  }
   
   setLandingState(){
     this.hostBtn.style.display = "inline";
@@ -51,6 +32,10 @@ class UI{
     this.joinBtn.innerHTML = "Join";
     this.hostBtn.innerHTML = "Host";
     this.currentState = "landing";
+
+    this.backBtn.onclick = this.setLandingState.bind(this);
+    this.hostBtn.onclick = this.setNameState.bind(this, "host");
+    this.joinBtn.onclick = this.setNameState.bind(this, "join");
   }
   
   setNameState(suffix){
@@ -64,16 +49,13 @@ class UI{
     this.joinBtn.innerHTML = "Submit";
   
     this.currentState = "name-" + suffix;
+
+    this.backBtn.onclick = this.setLandingState.bind(this);
+    this.joinBtn.onclick = () => net.changeName(this.joinInput.value);
   }
   
   setJoinState(){
-  
-    if(this.joinInput.value.length < 4){
-      this.gameStatusText.innerHTML = "Name Is Too Short";
-      this.gameStatusText.style.visibility = "visible";
-      return;
-    }
-    
+        
     this.gameStatusText.style.visibility = "hidden";
 
     Cookies.set("username", this.joinInput.value, 1);
@@ -88,16 +70,13 @@ class UI{
     this.joinBtn.innerHTML = "Join";
   
     this.currentState = "join";
+
+    this.backBtn.onclick = this.setLandingState.bind(this);
+    this.joinBtn.onclick = () => net.joinGame(this.joinInput.value);
   }
   
   setHostState(){
   
-    if(this.joinInput.value.length < 4){
-      this.gameStatusText.innerHTML = "Name Is Too Short";
-      this.gameStatusText.style.visibility = "visible";
-      return;
-    }
-    
     this.gameStatusText.style.visibility = "hidden";
   
     Cookies.set("username", this.joinInput.value, 1);
@@ -112,6 +91,9 @@ class UI{
     this.joinBtn.innerHTML = "Host";
   
     this.currentState = "host";
+
+    this.backBtn.onclick = this.setLandingState.bind(this);
+    this.joinBtn.onclick = () => net.createGame(this.joinInput.value);
   }
   
   setGameFoundState(){
@@ -129,6 +111,11 @@ class UI{
     this.pregameUIContainer.style.display = "none";
     this.canvasContainer.style.display = "grid";
     this.currentState = "lobby";
+  }
+
+  changeNameResult(result){
+    if(this.currentState == "name-join") this.setJoinState();
+    else if(this.currentState == "name-host") this.setHostState();
   }
 }
 
