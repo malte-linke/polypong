@@ -56,10 +56,14 @@ module.exports = class Game {
     let playerVerticesFuture = PMath.getPlayerRectVertices(playerRunData);
 
 
-    this.runData.balls.forEach(b => {   
+    for(let j = 0; j < this.runData.balls.length; j++){   
+
+      let b = this.runData.balls[j];
 
       let ball = {x: b.position.x, y: b.position.y, radius: b.radius};
       let ballFuture = {x: b.position.x + b.velocity.x, y: b.position.y + b.velocity.y, radius: b.radius};
+
+      let ballCollided = false;
 
       //check if intersects with player
       for(let i = 0; i < playerVertices.length; i+=4){
@@ -69,15 +73,16 @@ module.exports = class Game {
         let currentPlayerVerticesFuture = playerVerticesFuture.slice(i, i+4);
         
         if(Collision.areCircleRectIntersectingPredictive(currentPlayerVertices, currentPlayerVerticesFuture, ball, ballFuture)){  
-          if(b.lastCollision == this.runData.players[i/4].pID) continue;
+          ballCollided = true;
+          if(b.lastCollision == this.runData.players[i/4].pID) continue;    
+          
           b.velocity = Vec2.getReflectionVector(b.velocity, Vec2.subtract(playerVertices[i+1], playerVertices[i]));
           b.lastCollision = this.runData.players[i/4].pID;
           return;
         }
       }
 
-      b.lastCollision = null;
-      
+      if(!ballCollided) b.lastCollision = null;
       
       //check if intersects with game border
       for(let i = 0; i < polygonVertices.length; i++){
@@ -99,7 +104,7 @@ module.exports = class Game {
         b.position.x = 0.5;
         b.position.y = 0.5;
       }
-    });
+    }
   }
 
   start(){
@@ -134,7 +139,7 @@ module.exports = class Game {
     if(this.runData.players.length == 3){
       this.runData.balls.push({ 
         position: {x: 0.5, y: 0.5} ,
-        velocity: {x: 0.01, y: -0.0025},
+        velocity: {x: 0.008, y: -0.004},
         radius: 0.01,
         lastCollision: null
       });
