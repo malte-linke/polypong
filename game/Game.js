@@ -5,8 +5,8 @@ module.exports = class Game {
     this.gID = gID;
 
     this.playerSpeed = 0.02; 
-
     this.phase = "lobby";
+    this.hasNewRunData = false;
 
     this.runData = {
       players : [],
@@ -14,18 +14,18 @@ module.exports = class Game {
     };
   }
 
-  update(){
-    this.checkCollisions();
-    this.applyVelocity();
+  update(deltaTimeFactor){
+    this.checkCollisions(deltaTimeFactor);
+    this.applyVelocities(deltaTimeFactor);
   }
 
-  applyVelocity(){
+  applyVelocities(deltaTimeFactor){
 
     //update players
-    this.runData.players.forEach(p => {
+    this.runData.players.forEach((p, i) => {
       //update positions
-      p.position += p.velocity * this.playerSpeed;
-      
+      p.position += (p.velocity * this.playerSpeed) * deltaTimeFactor;
+    
       //restrict player position
       if(p.position + p.size > 1){
         p.position = 1 - p.size;
@@ -37,12 +37,12 @@ module.exports = class Game {
 
     //update balls
     this.runData.balls.forEach(b => {
-      b.position.x += b.velocity.x;
-      b.position.y += b.velocity.y;
+      b.position.x += b.velocity.x * deltaTimeFactor;
+      b.position.y += b.velocity.y * deltaTimeFactor;
     });
   }
 
-  checkCollisions(){
+  checkCollisions(deltaTimeFactor){
     //get all vertices
     let polygonVertices = PMath.getPolygonVertices(this.runData.players.length, 0.5);
     let playerVertices = PMath.getPlayerRectVertices(this.runData.players);
@@ -50,7 +50,7 @@ module.exports = class Game {
     // get future player run data
     let playerRunData = Objects.clone(this.runData.players); 
     playerRunData.forEach(player => {
-      player.position += player.velocity * this.playerSpeed;
+      player.position += player.velocity * this.playerSpeed * deltaTimeFactor;
     });
 
     let playerVerticesFuture = PMath.getPlayerRectVertices(playerRunData);
@@ -61,7 +61,7 @@ module.exports = class Game {
       let b = this.runData.balls[j];
 
       let ball = {x: b.position.x, y: b.position.y, radius: b.radius};
-      let ballFuture = {x: b.position.x + b.velocity.x, y: b.position.y + b.velocity.y, radius: b.radius};
+      let ballFuture = {x: b.position.x + b.velocity.x * deltaTimeFactor, y: b.position.y + b.velocity.y * deltaTimeFactor, radius: b.radius};
 
       let ballCollided = false;
 
@@ -83,6 +83,7 @@ module.exports = class Game {
       }
 
       if(!ballCollided) b.lastCollision = null;
+      else this.hasNewRunData = true;
       
       //check if intersects with game border
       for(let i = 0; i < polygonVertices.length; i++){
@@ -94,6 +95,7 @@ module.exports = class Game {
         if(Collision.areCircleLineIntersectingPredictive(line, ball, ballFuture)){
           b.position.x = 0.5;
           b.position.y = 0.5;
+          this.hasNewRunData = true;
           return;
         }
       }
@@ -103,24 +105,17 @@ module.exports = class Game {
       if(b.position.x < 0 || b.position.x > 1 || b.position.y < 0 || b.position.y > 1){
         b.position.x = 0.5;
         b.position.y = 0.5;
+        this.hasNewRunData = true;
       }
     }
   }
 
-  start(){
+  getNewRunData(){
+    if(!this.hasNewRunData) return null;
 
-  }
-
-
-  close(){
-    //TODO: kick every player and send server close message
-//TODO: maybe give reason to what happened to other players
-  }
-
-  getRunData(){
+    this.hasNewRunData = false;
     return this.runData;
   }
-
 
   handlePlayerInput(pID, dir){
     //set velocity to player
@@ -129,8 +124,8 @@ module.exports = class Game {
     else dir = 0;
 
     this.runData.players.find(p => p.pID == pID).velocity = dir;
+    this.hasNewRunData = true;
   }
-
 
   addPlayer(pID){
     let isHost = this.runData.players.length <= 0 ? true : false;
@@ -153,8 +148,9 @@ module.exports = class Game {
         lastCollision: null
       });
     }
-  }
 
+    this.hasNewRunData = true;
+  }
 
   removePlayer(pID){
     
@@ -163,6 +159,8 @@ module.exports = class Game {
 
     // remove ball if less than 3 players left
     if(this.runData.players.length < 3) this.runData.balls = [];
+
+    this.hasNewRunData = true;
 
     // Return if game should close
     if(this.runData.players.length <= 0) return true; 

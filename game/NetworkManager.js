@@ -28,6 +28,8 @@ class NetworkManager {
 
     this.clockFPS = 60;
     this.clock = setInterval(this.clockTick.bind(this), 1000/this.clockFPS);
+    this.lastTime = Date.now();
+
 
     this.init();
   }
@@ -62,17 +64,25 @@ class NetworkManager {
   }
 
   clockTick(){
-    this.games.forEach(g => {
-      g.update();
 
-      let runData = g.getRunData();
+    // calculate delta time
+    this.timeNow = Date.now();
+    let deltaTime = this.timeNow - this.lastTime;
+    this.lastTime = this.timeNow;
+    let deltaTimeFactor = deltaTime / (1000/60);
+
+    this.games.forEach(g => {
+      g.update(deltaTimeFactor);
+
+      let runData = g.getNewRunData();
+      if(runData == null) return;
 
       let players = g.runData.players.map(p => this.getSocketByID(p.pID));
       
       //try catch in case player disconnects
       try{
         players.forEach(p => {
-          // set your own pID to "you"
+          // sets your own pID to "you"
           let currentPlayer = runData.players.find(_p => _p.pID == p.pID);
           currentPlayer.pID = "you";
           p.emit("runData", runData);

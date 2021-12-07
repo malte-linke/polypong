@@ -48,7 +48,7 @@ class Renderer {
   drawMap(numPlayers){
 
     let r = 0.5;
-    let vertices = getPolygonVertices(numPlayers, r, this.size);
+    let vertices = PMath.getPolygonVertices(numPlayers, r, this.size);
 
     // draw vertices
     this.ctx.strokeStyle = "#fff";
@@ -77,7 +77,7 @@ class Renderer {
 
   drawPlayers(players){    
     this.ctx.fillStyle = "#fff";
-    let vertices = getPlayerRectVertices(players, this.size);
+    let vertices = PMath.getPlayerRectVertices(players, this.size);
 
     for(let i = 0; i < vertices.length; i+=4){
       this.drawRect(vertices[i], vertices[i+1], vertices[i+2], vertices[i+3]);
