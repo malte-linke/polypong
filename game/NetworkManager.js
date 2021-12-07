@@ -91,8 +91,8 @@ class NetworkManager {
 
     if(socket.pID == name) return socket.emit("changeNameResult", { successful: true });
 
-    if(name.length < 4) 
-      return socket.emit("changeNameResult", { successful: false, reason: "Name must be at least 4 characters long" });
+    if(name.length < 3) 
+      return socket.emit("changeNameResult", { successful: false, reason: "Name must be at least 3 characters long" });
 
     if(this.players.map(p => p.pID).includes(name))
       return socket.emit("changeNameResult", { successful: false, reason: "Name already taken" });
@@ -138,8 +138,8 @@ class NetworkManager {
     if(this.games.map(g => g.gID).includes(gID)) 
       return socket.emit("createResult", { successful: false, reason: "Lobby name already taken" });
 
-    if(gID.length < 4) 
-      return socket.emit("createResult", { successful: false, reason: "Lobby name must be at least 4 characters long" });
+    if(gID.length < 3) 
+      return socket.emit("createResult", { successful: false, reason: "Lobby name must be at least 3 characters long" });
     
 
     //instanciate game
