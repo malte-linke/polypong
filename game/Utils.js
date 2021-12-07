@@ -242,8 +242,8 @@ module.exports = {
         let oVectorSide, dirVectorSide;
     
         if(i == players.length - 1){
-          oVectorSide = polygonVertices[0];
-          dirVectorSide = module.exports.Vec2.subtract(polygonVertices[i], polygonVertices[0]);
+          oVectorSide = polygonVertices[i];
+          dirVectorSide = module.exports.Vec2.subtract(polygonVertices[0], polygonVertices[i]);
         }
         else{
           oVectorSide = polygonVertices[i];
