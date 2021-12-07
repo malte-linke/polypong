@@ -26,11 +26,15 @@ class Renderer {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     if(this.runData == null || this.runData.players.length < 3) return;
+    
+    // get rotation so that player is always at the bottom
+    let playerIndex = this.runData.players.indexOf(this.runData.players.find(p => p.pID = "you"));
+    let verticeAngle = 360/this.runData.players.length;
 
-    //TODO: get rotation angle to place player at bottom
+    let rotationDeg = (verticeAngle * playerIndex) + (verticeAngle/4) * (this.runData.players.length - 2);  
 
-
-    //this.rotateCanvas(rotationDeg);
+    
+    this.rotateCanvas(rotationDeg);
 
     // draw
     this.drawMap(this.runData.players.length);
@@ -38,7 +42,7 @@ class Renderer {
     this.drawPlayers(this.runData.players);
 
     // reset rotation
-    //this.rotateCanvas(-rotationDeg);
+    this.rotateCanvas(-rotationDeg);
   }
   
   drawMap(numPlayers){
