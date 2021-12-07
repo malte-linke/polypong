@@ -124,7 +124,7 @@ Distributed under the GNU GPL v3.0 License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-E-Mail: iubaqua0@gmail.com
+E-Mail: plate.felix@gmx.de
 
 Project Link: [https://github.com/tensoid/polypong](https://github.com/tensoid/polypong)
 
