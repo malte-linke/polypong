@@ -202,7 +202,7 @@ class NetworkManager {
     //check if player is in game
     if(!this.isPlayerInGame(socket.pID, socket.gID)) return socket.gID = null;
 
-    if(dir == "f") game.addPlayer(game.runData.players.length + "fff");
+    //if(dir == "f") game.addPlayer(game.runData.players.length + "fff");
 
     game.handlePlayerInput(socket.pID, dir);
   }
