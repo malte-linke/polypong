@@ -21,5 +21,5 @@ function loop(){
 }
 
 loop();
-net.joinGame("abc");
-net.createGame("abc");
+//net.joinGame("abc");
+//net.createGame("abc");

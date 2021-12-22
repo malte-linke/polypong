@@ -21,7 +21,6 @@ class Renderer {
     // clear canvas
     this.ctx.fillStyle = this.clearColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    console.log(runData);
     if(runData == null) return;
 
 
