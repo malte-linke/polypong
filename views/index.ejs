@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/stylesheets/index.css">
   <script src="/javascripts/socketio.js"></script>
   <script src="/javascripts/Utils.js"></script>
+  <script defer src="/javascripts/Game.js"></script>
   <script src='/javascripts/NetworkManager.js'></script>
   <script src='/javascripts/Renderer.js'></script>
   <script src='/javascripts/Input.js'></script>
@@ -15,6 +16,8 @@
   <script defer src="/javascripts/Main.js"></script>
 </head>
 <body>
+  <img id="background" src="/images/bg1.png" alt="background" style="display: none;">
+
   <div class="pregame-ui-container">
     <div class="title-container">
       <h1>Poly-Pong</h1>
@@ -37,5 +40,10 @@
   <div class="canvas-container">
     <canvas id="canvas"></canvas>
   </div>
+
+  <!-- For auto load when sharing invite link -->
+  <script>
+    let gID = "<%= gID %>";
+  </script>
 </body>
 </html>

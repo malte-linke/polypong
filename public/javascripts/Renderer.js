@@ -3,54 +3,54 @@ class Renderer {
   constructor(canvasID) {
     this.canvas = document.getElementById(canvasID);
     this.ctx = this.canvas.getContext("2d");
-    this.runData = null;
 
     window.addEventListener("resize", this.resize.bind(this));
 
     this.resize();
 
 
-    this.background = "black";
+    this.clearColor = "black";
+    this.backgroundImage = document.querySelector("#background");
   }
 
-  setRunData(runData){
-    this.runData = runData;
-  }
 
   //
   // DRAWING
   //
-  render(){
+  render(runData){
     // clear canvas
-    this.ctx.fillStyle = this.background;
+    this.ctx.fillStyle = this.clearColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    console.log(runData);
+    if(runData == null) return;
 
-    if(this.runData == null || this.runData.players.length < 3) return;
+
+    // draw background
+    this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
     
-    // get rotation so that player is always at the bottom
-    let playerIndex = this.runData.players.indexOf(this.runData.players.find(p => p.pID = "you"));
-    let verticeAngle = 360/this.runData.players.length;
+    // get rotation angle so that player is always at the bottom
+    let playerIndex = runData.players.indexOf(runData.players.find(p => p.pID == "you"));
+    let angle = PMath.getPlayerToBottomRotationAngle(playerIndex, runData.players.length, this.size)
 
-    let rotationDeg = (verticeAngle * playerIndex) + (verticeAngle/4) * (this.runData.players.length - 2);  
-
-    
-    this.rotateCanvas(rotationDeg);
+    // rotate canvas
+    this.rotateCanvas(angle);
 
     // draw
-    this.drawMap(this.runData.players.length);
-    this.drawBalls(this.runData.balls);
-    this.drawPlayers(this.runData.players);
+    this.drawMap(runData.players.length);
+    this.drawBalls(runData);
+    this.drawPlayers(runData.players);
 
     // reset rotation
-    this.rotateCanvas(-rotationDeg);
+    this.rotateCanvas(-angle);
   }
-  
+
   drawMap(numPlayers){
 
     let r = 0.5;
     let vertices = PMath.getPolygonVertices(numPlayers, r, this.size);
 
-    // draw vertices
+  
+    // draw polygon
     this.ctx.strokeStyle = "#fff";
     this.ctx.beginPath();
     this.ctx.moveTo(vertices[0].x, vertices[0].y);
@@ -63,13 +63,52 @@ class Renderer {
 
     this.ctx.stroke();
     this.ctx.closePath();
+
+
+    // make playing field darker
+    this.ctx.strokeStyle = "#000";
+    this.ctx.globalAlpha = 0.8
+    this.ctx.beginPath();
+    this.ctx.moveTo(vertices[0].x, vertices[0].y);
+
+    for(let i = 1; i < vertices.length; i++){
+      this.ctx.lineTo(vertices[i].x, vertices[i].y);
+    }
+
+    this.ctx.lineTo(vertices[0].x, vertices[0].y);
+
+    this.ctx.fill();
+    this.ctx.closePath();
+    this.ctx.globalAlpha = 1
   }
 
-  drawBalls(balls){
+  drawBalls(runData){
+
+    let balls = runData.balls;
+
     for(let i = 0; i < balls.length; i++){
+
+      // calculate circumradius
+      let r = balls[i].radius / Math.cos(Math.PI / runData.players.length);
+      let vertices = PMath.getPolygonVertices(runData.players.length, r, this.size);
+
+      // add current ball position to vertices
+      vertices.forEach(vertex => {
+        vertex.x += (balls[i].position.x - 0.5) * this.size;
+        vertex.y += (balls[i].position.y - 0.5) * this.size;
+      });
+
+      // draw vertices
       this.ctx.fillStyle = "#fff";
       this.ctx.beginPath();
-      this.ctx.arc(balls[i].position.x * this.size, balls[i].position.y * this.size, this.size * balls[i].radius, 0, 2 * Math.PI);
+      this.ctx.moveTo(vertices[0].x, vertices[0].y);
+
+      for(let i = 1; i < vertices.length; i++){
+        this.ctx.lineTo(vertices[i].x, vertices[i].y);
+      }
+
+      this.ctx.lineTo(vertices[0].x, vertices[0].y);
+
       this.ctx.fill();
       this.ctx.closePath();
     }

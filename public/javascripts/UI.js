@@ -13,16 +13,9 @@ class UI{
     this.setLandingState();
   }
 
-  joinBtnHandler(e){
-    if(this.currentState == "landing") this.setNameState("join");
-    else if(this.currentState == "name-join") this.setJoinState(this.joinInput.value);
-    else if(this.currentState == "name-host") this.setHostState(this.joinInput.value);
-    else if(this.currentState == "join") this.findGame(this.joinInput.value);
-    else if(this.currentState == "host") this.hostGame(this.joinInput.value);
-  }
-
-
-  
+  //
+  // States
+  //
   setLandingState(){
     this.hostBtn.style.display = "inline";
     this.joinInput.style.display = "none";
@@ -104,6 +97,9 @@ class UI{
   }
 
 
+  //
+  // Results
+  //
   changeNameResult(result){
     this.gameStatusText.style.visibility = "hidden";
 

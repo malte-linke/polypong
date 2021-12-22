@@ -55,6 +55,6 @@ class NetworkManager {
   }
 
   runDataHandler(runData){
-    renderer.setRunData(runData);
+    game.runData = runData;
   } 
 }

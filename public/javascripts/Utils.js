@@ -80,14 +80,14 @@ const Vec2 = {
 
 
 /**
- * Handles all the polygon/vertices stuff for drawing (pixel based)
+ * Handles all the polygon/vertices stuff for drawing and calculating
  */
 const PMath = {
-  getPlayerRectVertices(players, canvasSize){
+  getPlayerRectVertices(players, canvasSize = 1){
   
     let vertices = [];
     let polygonVertices = this.getPolygonVertices(players.length, 0.5, canvasSize);
-    let polygonSideLength = this.getPolygonSideLength(0.5, players.length, -1);
+    let polygonSideLength = this.getPolygonSideLength(players.length, 0.5, 1);
     let playerHeightFactor = 30;
   
   
@@ -112,6 +112,7 @@ const PMath = {
       let playerStartVertex = Vec2.applyDirVec(oVectorSide, players[i].position, dirVectorSide);
       let playerStartVertexLeft = Vec2.applyDirVec(playerStartVertex, polygonSideLength/playerHeightFactor, ortogonalDirVectorSide);
       let playerStartVertexRight = Vec2.applyDirVec(playerStartVertex, -(polygonSideLength/playerHeightFactor), ortogonalDirVectorSide);
+      //let playerStartVertexRight = playerStartVertex;
       let playerEndVertexLeft = Vec2.applyDirVec(playerStartVertexLeft, players[i].size, dirVectorSide);
       let playerEndVertexRight = Vec2.applyDirVec(playerStartVertexRight, players[i].size, dirVectorSide);
   
@@ -122,9 +123,9 @@ const PMath = {
   },
   
   
-  getPolygonVertices(n, r, canvasSize){
+  getPolygonVertices(n, r, canvasSize = 1){
     let vertices = [];
-  
+
     for(let i = 0; i < n; i++){
       vertices.push({
         x: (r * Math.cos(2 * Math.PI * i / n) * canvasSize) + canvasSize/2, 
@@ -136,40 +137,25 @@ const PMath = {
   },
   
   
-  getPolygonSideLength(r, n, canvasSize = -1){
+  getPolygonSideLength(n, r, canvasSize = 1){
   
-    let p1, p2;
+    let p1 = {
+      x: (r * Math.cos(2 * Math.PI * 0 / n) * canvasSize) + canvasSize/2, 
+      y: (r * Math.sin(2 * Math.PI * 0 / n) * canvasSize) + canvasSize/2
+    };
   
-    if(canvasSize == -1){
-      p1 = {
-        x: (r * Math.cos(2 * Math.PI * 0 / n)), 
-        y: (r * Math.sin(2 * Math.PI * 0 / n))
-      };
+    let p2 = {
+      x: (r * Math.cos(2 * Math.PI * 1 / n) * canvasSize) + canvasSize/2, 
+      y: (r * Math.sin(2 * Math.PI * 1 / n) * canvasSize) + canvasSize/2
+    };
     
-      p2 = {
-        x: (r * Math.cos(2 * Math.PI * 1 / n)),
-        y: (r * Math.sin(2 * Math.PI * 1 / n))
-      };
-    }
-    else{
-      p1 = {
-        x: (r * Math.cos(2 * Math.PI * 0 / n) * canvasSize) + canvasSize/2, 
-        y: (r * Math.sin(2 * Math.PI * 0 / n) * canvasSize) + canvasSize/2
-      };
     
-      p2 = {
-        x: (r * Math.cos(2 * Math.PI * 1 / n) * canvasSize) + canvasSize/2, 
-        y: (r * Math.sin(2 * Math.PI * 1 / n) * canvasSize) + canvasSize/2
-      };
-    }
-    
-  
     return this.getDistanceBetweenPoints(p1, p2);
   },
   
   
-  getPolygonSideDistance(radius, numSides, canvasSize){
-    return Math.sqrt(Math.pow(radius * canvasSize, 2) - Math.pow(this.getPolygonSideLength(radius, numSides) / 2, 2))
+  getPolygonSideDistance(radius, numSides, canvasSize = 1){
+    return Math.sqrt(Math.pow(radius * canvasSize, 2) - Math.pow(this.getPolygonSideLength(numSides, radius, canvasSize) / 2, 2))
   },
   
   
@@ -179,100 +165,23 @@ const PMath = {
   
     return Math.sqrt( a*a + b*b );
   },
-  
-  
-  getTwoHighestVertices(vertices) {
-    let highest = 0;
-    let secondHighest = 0;
-  
-    for(let i = 0; i < vertices.length; i++){
-      if(vertices[i].y < vertices[highest].y){
-        secondHighest = highest;
-        highest = i;
-      } else if(vertices[i].y < vertices[secondHighest].y){
-        secondHighest = i;
-      }
+
+
+  getPlayerToBottomRotationAngle(playerIndex, players, canvasSize = 1){
+    let polygonVertices = PMath.getPolygonVertices(players, 0.5, canvasSize);
+    let playerSideVertices = [];
+
+    if(playerIndex == players - 1){
+      playerSideVertices.push(polygonVertices[playerIndex]);
+      playerSideVertices.push(polygonVertices[0]);
     }
-  
-    return [vertices[highest], vertices[secondHighest]];
-  }
+    else playerSideVertices = polygonVertices.slice(playerIndex, (playerIndex) + 2);
 
 
-}
+    let v1 = Vec2.subtract(playerSideVertices[0], playerSideVertices[1]);
+    let v2 = Vec2.subtract({x: 1, y: 0}, {x: 0, y: 0});
 
-
-/**
- * Handles all the polygon/vertices stuff for calculating (0-1 based)
- */
-const PMathIdentity = {
-  getDistanceBetweenPoints: (p1, p2) => {
-    var a = p1.x - p2.x;
-    var b = p1.y - p2.y;
-  
-    return Math.sqrt( a*a + b*b );
-  },
-
-  getPolygonSideLength: (n, r) => {  
-      let p1 = {
-        x: (r * Math.cos(2 * Math.PI * 0 / n)), 
-        y: (r * Math.sin(2 * Math.PI * 0 / n))
-      };
-    
-      let p2 = {
-        x: (r * Math.cos(2 * Math.PI * 1 / n)),
-        y: (r * Math.sin(2 * Math.PI * 1 / n))
-      };
-    
-    return PMathIdentity.getDistanceBetweenPoints(p1, p2);
-  },
-
-  getPolygonVertices: (n, r) => {
-    let vertices = [];
-    for(let i = 0; i < n; i++){
-      vertices.push({
-        x: (r * Math.cos(2 * Math.PI * i / n) + 0.5), 
-        y: (r * Math.sin(2 * Math.PI * i / n) + 0.5)
-      });
-    }
-    return vertices;
-  },
-
-  getPlayerRectVertices: (players) => {
-  
-    let vertices = [];
-    let polygonVertices = PMathIdentity.getPolygonVertices(players.length, 0.5);
-    let polygonSideLength = PMathIdentity.getPolygonSideLength(players.length, 0.5);
-    let playerHeightFactor = 30;
-  
-  
-    for(let i = 0; i < players.length; i++){
-  
-      // Get vector of the players polygon side
-      let oVectorSide, dirVectorSide;
-  
-      if(i == players.length - 1){
-        oVectorSide = polygonVertices[i];
-        dirVectorSide = Vec2.subtract(polygonVertices[0], polygonVertices[i]);
-      }
-      else{
-        oVectorSide = polygonVertices[i];
-        dirVectorSide = Vec2.subtract(polygonVertices[i+1], polygonVertices[i]);
-      }
-  
-      // get the ortogonal vector of the side
-      let ortogonalDirVectorSide = {x: -dirVectorSide.y, y: dirVectorSide.x};
-      
-      //calculate all corners of player
-      let playerStartVertex = Vec2.applyDirVec(oVectorSide, players[i].position, dirVectorSide);
-      let playerStartVertexLeft = Vec2.applyDirVec(playerStartVertex, polygonSideLength/playerHeightFactor, ortogonalDirVectorSide);
-      let playerStartVertexRight = Vec2.applyDirVec(playerStartVertex, -(polygonSideLength/playerHeightFactor), ortogonalDirVectorSide);
-      let playerEndVertexLeft = Vec2.applyDirVec(playerStartVertexLeft, players[i].size, dirVectorSide);
-      let playerEndVertexRight = Vec2.applyDirVec(playerStartVertexRight, players[i].size, dirVectorSide);
-  
-      vertices.push(playerStartVertexLeft, playerStartVertexRight, playerEndVertexRight, playerEndVertexLeft);
-    }  
-
-    return vertices;
+    return Vec2.getAngle(v1, v2);
   }
 }
 
@@ -439,129 +348,6 @@ const Collision = {
     let s = numerator2 / denominator;
 
     return (r >= 0 && r <= 1) && (s >= 0 && s <= 1);
-  }
-}
-
-
-/**
- * Handles the client game simulation
- */
-const Game = {
-  updateRunData(runData, deltaTimeFactor){
-    if(runData == null) return;
-
-    //update player positions
-    runData.players.forEach(player => {
-      player.position += player.velocity * 0.02 * deltaTimeFactor;
-
-      //restrict player position
-      if(player.position + player.size > 1){
-        player.position = 1 - player.size;
-      }
-      if(player.position < 0){
-        player.position = 0;
-      }
-    });
-
-    //update ball position
-    runData.balls.forEach(balls => {
-      balls.position.x += balls.velocity.x * deltaTimeFactor;
-      balls.position.y += balls.velocity.y * deltaTimeFactor;
-    });
-  },
-
-  update(runData, deltaTimeFactor){
-    if(runData == null) return;
-    this.checkCollisions(runData, deltaTimeFactor);
-    this.applyVelocities(runData, deltaTimeFactor);
-  },
-
-  applyVelocities(runData, deltaTimeFactor){
-
-    //update players
-    runData.players.forEach((p, i) => {
-      //update positions
-      p.position += (p.velocity * 0.02) * deltaTimeFactor;
-    
-      //restrict player position
-      if(p.position + p.size > 1){
-        p.position = 1 - p.size;
-      }
-      if(p.position < 0){
-        p.position = 0;
-      }
-    });
-
-    //update balls
-    runData.balls.forEach(b => {
-      b.position.x += b.velocity.x * deltaTimeFactor;
-      b.position.y += b.velocity.y * deltaTimeFactor;
-    });
-  },
-
-  checkCollisions(runData, deltaTimeFactor){
-    //get all vertices
-    let polygonVertices = PMathIdentity.getPolygonVertices(runData.players.length, 0.5, renderer.size);
-    let playerVertices = PMathIdentity.getPlayerRectVertices(runData.players, renderer.size);
-
-    // get future player run data
-    let playerRunData = Objects.clone(runData.players); 
-    playerRunData.forEach(player => {
-      player.position += player.velocity * 0.02 * deltaTimeFactor;
-    });
-
-    let playerVerticesFuture = PMathIdentity.getPlayerRectVertices(playerRunData, renderer.size);
-
-
-    for(let j = 0; j < runData.balls.length; j++){   
-
-      let b = runData.balls[j];
-
-      let ball = {x: b.position.x, y: b.position.y, radius: b.radius};
-      let ballFuture = {x: b.position.x + b.velocity.x * deltaTimeFactor, y: b.position.y + b.velocity.y * deltaTimeFactor, radius: b.radius};
-
-      let ballCollided = false;
-
-      //check if intersects with player
-      for(let i = 0; i < playerVertices.length; i+=4){
-
-        // get only vertices for current player being checked
-        let currentPlayerVertices = playerVertices.slice(i , i+4);
-        let currentPlayerVerticesFuture = playerVerticesFuture.slice(i, i+4);
-        
-        if(Collision.areCircleRectIntersectingPredictive(currentPlayerVertices, currentPlayerVerticesFuture, ball, ballFuture)){  
-          ballCollided = true;
-          if(b.lastCollision == i/4) continue;    
-          
-          b.velocity = Vec2.getReflectionVector(b.velocity, Vec2.subtract(playerVertices[i+1], playerVertices[i]));
-          b.lastCollision = i/4;
-          return;
-        }
-      }
-
-      if(!ballCollided) b.lastCollision = null;
-      
-      //check if intersects with game border
-      for(let i = 0; i < polygonVertices.length; i++){
-        let vertex = polygonVertices[i];
-        let nextVertex = (i == polygonVertices.length - 1) ? polygonVertices[0] : polygonVertices[i+1];
-
-        let line = {x1: vertex.x, y1: vertex.y, x2: nextVertex.x, y2: nextVertex.y};
-
-        if(Collision.areCircleLineIntersectingPredictive(line, ball, ballFuture)){
-          b.position.x = 0.5;
-          b.position.y = 0.5;
-          return;
-        }
-      }
-
-
-      //check if out of bounds
-      if(b.position.x < 0 || b.position.x > 1 || b.position.y < 0 || b.position.y > 1){
-        b.position.x = 0.5;
-        b.position.y = 0.5;
-      }
-    }
   }
 }
 

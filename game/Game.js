@@ -74,16 +74,16 @@ module.exports = class Game {
         
         if(Collision.areCircleRectIntersectingPredictive(currentPlayerVertices, currentPlayerVerticesFuture, ball, ballFuture)){  
           ballCollided = true;
-          if(b.lastCollision == this.runData.players[i/4].pID) continue;    
+          this.hasNewRunData = true;
+          if(b.lastCollision == i/4) continue;    
           
           b.velocity = Vec2.getReflectionVector(b.velocity, Vec2.subtract(playerVertices[i+1], playerVertices[i]));
-          b.lastCollision = this.runData.players[i/4].pID;
+          b.lastCollision = i/4;
           return;
         }
       }
 
       if(!ballCollided) b.lastCollision = null;
-      else this.hasNewRunData = true;
       
       //check if intersects with game border
       for(let i = 0; i < polygonVertices.length; i++){
@@ -127,28 +127,11 @@ module.exports = class Game {
     this.hasNewRunData = true;
   }
 
-  addPlayer(pID){
+  addPlayer(pID, index = -1){
     let isHost = this.runData.players.length <= 0 ? true : false;
-    this.runData.players.push({ position: 0.375, size: 0.25, velocity: 0, pID, isHost });
-
-    if(this.runData.players.length == 3){
-      this.runData.balls.push({ 
-        position: {x: 0.5, y: 0.5} ,
-        velocity: {x: 0.008, y: -0.004},
-        radius: 0.01,
-        lastCollision: null
-      });
-    }
-
-    if(this.runData.players.length == 5){
-      this.runData.balls.push({ 
-        position: {x: 0.5, y: 0.5} ,
-        velocity: {x: -0.008, y: 0.004},
-        radius: 0.01,
-        lastCollision: null
-      });
-    }
-
+    this.runData.players.splice(index, 0, { position: 0.375, size: 0.25, velocity: 0, pID, isHost });
+    this.onPlayerNumberChange(true);
+    
     this.hasNewRunData = true;
   }
 
@@ -157,14 +140,78 @@ module.exports = class Game {
     //TODO: implement host migration and only close if no host left
     this.runData.players = this.runData.players.filter(p => p.pID != pID);
 
-    // remove ball if less than 3 players left
-    if(this.runData.players.length < 3) this.runData.balls = [];
-
+    this.onPlayerNumberChange(false);
     this.hasNewRunData = true;
 
     // Return if game should close
     if(this.runData.players.length <= 0) return true; 
     if(this.runData.players.find(p => p.isHost) == undefined) return true; 
     return false;
+  }
+
+  onPlayerNumberChange(increased){
+
+    /*
+    EVERYTHING IN THIS METHOD IS FOR TESTING PURPOSES ONLY
+    */
+
+    let num = this.runData.players.filter(p => p.pID.length >= 3).length;
+
+    if(num == 0) this.runData.balls = [];
+
+    if(num == 1){
+      //remove all walls
+      this.runData.players = this.runData.players.filter(p => p.pID.length >= 3);
+      this.addWall();
+      this.addWall();
+      this.addWall();
+
+
+      //add ball
+      this.runData.balls.push(
+        { 
+        position: {x: 0.5, y: 0.5} ,
+        velocity: {x: 0.008, y: -0.004},
+        radius: 0.01,
+        lastCollision: null
+        }
+      )
+
+      //this.addPlayer("abcd", 0);
+      //this.addPlayer("abcd", 0);
+    }
+
+    if(num == 2){
+      //remove all walls
+      this.runData.players = this.runData.players.filter(p => p.pID.length >= 3);
+      this.addWall(1);
+      this.addWall(3);
+    }
+
+    if(num == 3){
+      //remove all walls
+      this.runData.players = this.runData.players.filter(p => p.pID.length >= 3);
+    }
+
+
+    if(num == 5 && increased){
+      this.runData.balls.push(
+        { 
+        position: {x: 0.5, y: 0.5} ,
+        velocity: {x: 0.008, y: -0.004},
+        radius: 0.01,
+        lastCollision: null
+        }
+      )
+    }
+
+    if(num == 5 && !increased){
+      this.runData.balls.pop();
+    }
+  }
+
+  addWall(index = -1){
+    if(index == -1) index = this.runData.players.length;
+    this.runData.players.splice(index, 0, { position: 0, size: 1, velocity: 0, pID: "-", isHost: false });
   }
 }

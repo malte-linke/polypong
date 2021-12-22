@@ -77,11 +77,15 @@ class NetworkManager {
       let runData = g.getNewRunData();
       if(runData == null) return;
 
-      let players = g.runData.players.map(p => this.getSocketByID(p.pID));
+      let sockets = g.runData.players.map(p => this.getSocketByID(p.pID));
+
+      // filter out undefined sockets aka bots or walls etc.
+      sockets = sockets.filter(s => s != undefined);
+
       
       //try catch in case player disconnects
       try{
-        players.forEach(p => {
+        sockets.forEach(p => {
           // sets your own pID to "you"
           let currentPlayer = runData.players.find(_p => _p.pID == p.pID);
           currentPlayer.pID = "you";
@@ -171,9 +175,10 @@ class NetworkManager {
     
     //get game instance
     let game = this.getGameByID(gID);
-    if(game == undefined) {
+
+    if(game == undefined)
       return socket.emit("joinResult", { successful: false, reason: "Game not found" });
-    }
+    
 
     game.addPlayer(socket.pID);
 
@@ -183,8 +188,7 @@ class NetworkManager {
     // send result to player
     socket.emit("joinResult", { successful: true });
 
-    if(game.runData.players.length == 1) return console.log(`[~HOST] Player ${socket.pID} joined Game ${gID}`);
-    console.log(`[~PLAYER] Player ${socket.pID} joined Game ${gID}`);
+    console.log(`Player ${socket.pID} joined Game ${gID}`);
   }
 
   inputHandler(socket, dir){
@@ -197,6 +201,8 @@ class NetworkManager {
 
     //check if player is in game
     if(!this.isPlayerInGame(socket.pID, socket.gID)) return socket.gID = null;
+
+    if(dir == "f") game.addPlayer(game.runData.players.length + "fff");
 
     game.handlePlayerInput(socket.pID, dir);
   }
