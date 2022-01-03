@@ -232,9 +232,6 @@ module.exports = {
     
       let vertices = [];
       let polygonVertices = module.exports.PMath.getPolygonVertices(players.length, 0.5);
-      let polygonSideLength = module.exports.PMath.getPolygonSideLength(players.length, 0.5);
-      let playerHeightFactor = 30;
-    
     
       for(let i = 0; i < players.length; i++){
     

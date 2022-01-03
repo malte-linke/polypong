@@ -33,32 +33,32 @@ const Cookies = {
  */
 const Vec2 = {
 
-  add: (v1, v2) => {
+  add (v1, v2) {
     let vNewX = v1.x + v2.x;
     let vNewY = v1.y + v2.y;
   
     return {x: vNewX, y: vNewY};
   },
 
-  subtract: (v1, v2) => {
+  subtract (v1, v2) {
     let vNewX = v1.x - v2.x;
     let vNewY = v1.y - v2.y;
   
     return {x: vNewX, y: vNewY};
   },
 
-  dotProduct: (v1, v2) => {
+  dotProduct (v1, v2) {
     return v1.x * v2.x + v1.y * v2.y;
   },
   
-  applyDirVec: (oVector, r, dirVector) => {
+  applyDirVec (oVector, r, dirVector) {
     let newX = oVector.x + (r * dirVector.x);
     let newY = oVector.y + (r * dirVector.y);
   
     return {x: newX, y: newY};
   },
 
-  getAngle: (v1, v2) => {
+  getAngle (v1, v2) {
     // return angle between two vectors in degrees
     let dot = v1.x * v2.x + v1.y * v2.y; // dot product
     let det = v1.x * v2.y - v1.y * v2.x; // determinant
@@ -75,6 +75,10 @@ const Vec2 = {
   normalize (v)  {
     let len = Math.sqrt(v.x * v.x + v.y * v.y);
     return {x: v.x / len, y: v.y / len};
+  },
+
+  abs(v) {
+    return Math.sqrt(v.x * v.x + v.y * v.y);
   }
 }
 
@@ -97,9 +101,6 @@ const PMath = {
   
     let vertices = [];
     let polygonVertices = this.getPolygonVertices(players.length, 0.5, canvasSize);
-    let polygonSideLength = this.getPolygonSideLength(players.length, 0.5, 1);
-    let playerHeightFactor = 30;
-  
   
     for(let i = 0; i < players.length; i++){
   
