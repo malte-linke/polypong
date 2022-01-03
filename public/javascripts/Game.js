@@ -56,8 +56,10 @@
 
       let b = this.runData.balls[j];
 
-      let ball = {x: b.position.x, y: b.position.y, radius: b.radius};
-      let ballFuture = {x: b.position.x + b.velocity.x * deltaTimeFactor, y: b.position.y + b.velocity.y * deltaTimeFactor, radius: b.radius};
+      let polygonSideLength = PMath.getPolygonSideLength(this.runData.players.length, 0.5);
+
+      let ball = {x: b.position.x, y: b.position.y, radius: b.radius * polygonSideLength};
+      let ballFuture = {x: b.position.x + b.velocity.x * deltaTimeFactor, y: b.position.y + b.velocity.y * deltaTimeFactor, radius: b.radius * polygonSideLength};
 
       let ballCollided = false;
 

@@ -87,9 +87,7 @@ class Renderer {
 
     for(let i = 0; i < balls.length; i++){
 
-      // calculate circumradius
-      let r = balls[i].radius / Math.cos(Math.PI / runData.players.length);
-      let vertices = PMath.getPolygonVertices(runData.players.length, r, this.size);
+      let vertices = PMath.getBallPolygonVertices(runData.players, balls[i], this.size);
 
       // add current ball position to vertices
       vertices.forEach(vertex => {

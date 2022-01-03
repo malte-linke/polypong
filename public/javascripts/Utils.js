@@ -83,6 +83,16 @@ const Vec2 = {
  * Handles all the polygon/vertices stuff for drawing and calculating
  */
 const PMath = {
+
+  getBallPolygonVertices(players, ball, canvasSize = 1) {
+    // calculate circumradius
+    let r = ball.radius / Math.cos(Math.PI / players.length);
+    let polygonSideLength = PMath.getPolygonSideLength(players.length, 0.5);
+    r *= polygonSideLength;
+
+    return this.getPolygonVertices(players.length, r, canvasSize);
+  },
+
   getPlayerRectVertices(players, canvasSize = 1){
   
     let vertices = [];
