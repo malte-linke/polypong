@@ -110,9 +110,8 @@ const PMath = {
       
       //calculate all corners of player
       let playerStartVertex = Vec2.applyDirVec(oVectorSide, players[i].position, dirVectorSide);
-      let playerStartVertexLeft = Vec2.applyDirVec(playerStartVertex, polygonSideLength/playerHeightFactor, ortogonalDirVectorSide);
-      let playerStartVertexRight = Vec2.applyDirVec(playerStartVertex, -(polygonSideLength/playerHeightFactor), ortogonalDirVectorSide);
-      //let playerStartVertexRight = playerStartVertex;
+      let playerStartVertexLeft = Vec2.applyDirVec(playerStartVertex, players[i].width/2, ortogonalDirVectorSide);
+      let playerStartVertexRight = Vec2.applyDirVec(playerStartVertex, -players[i].width/2, ortogonalDirVectorSide);
       let playerEndVertexLeft = Vec2.applyDirVec(playerStartVertexLeft, players[i].size, dirVectorSide);
       let playerEndVertexRight = Vec2.applyDirVec(playerStartVertexRight, players[i].size, dirVectorSide);
   

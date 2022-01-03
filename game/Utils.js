@@ -255,8 +255,8 @@ module.exports = {
         
         //calculate all corners of player
         let playerStartVertex = module.exports.Vec2.applyDirVec(oVectorSide, players[i].position, dirVectorSide);
-        let playerStartVertexLeft = module.exports.Vec2.applyDirVec(playerStartVertex, polygonSideLength/playerHeightFactor, ortogonalDirVectorSide);
-        let playerStartVertexRight = module.exports.Vec2.applyDirVec(playerStartVertex, -(polygonSideLength/playerHeightFactor), ortogonalDirVectorSide);
+        let playerStartVertexLeft = module.exports.Vec2.applyDirVec(playerStartVertex, players[i].width/2, ortogonalDirVectorSide);
+        let playerStartVertexRight = module.exports.Vec2.applyDirVec(playerStartVertex, -players[i].width/2, ortogonalDirVectorSide);
         let playerEndVertexLeft = module.exports.Vec2.applyDirVec(playerStartVertexLeft, players[i].size, dirVectorSide);
         let playerEndVertexRight = module.exports.Vec2.applyDirVec(playerStartVertexRight, players[i].size, dirVectorSide);
     

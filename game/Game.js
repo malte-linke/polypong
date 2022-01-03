@@ -129,7 +129,7 @@ module.exports = class Game {
 
   addPlayer(pID, index = -1){
     let isHost = this.runData.players.length <= 0 ? true : false;
-    this.runData.players.splice(index, 0, { position: 0.375, size: 0.25, velocity: 0, pID, isHost });
+    this.runData.players.splice(index, 0, { position: 0.375, size: 0.25, width: 0.05, velocity: 0, pID, isHost });
     this.onPlayerNumberChange(true);
     
     this.hasNewRunData = true;
@@ -212,6 +212,6 @@ module.exports = class Game {
 
   addWall(index = -1){
     if(index == -1) index = this.runData.players.length;
-    this.runData.players.splice(index, 0, { position: 0, size: 1, velocity: 0, pID: "-", isHost: false });
+    this.runData.players.splice(index, 0, { position: 0, size: 1, width: 0.05, velocity: 0, pID: "-", isHost: false });
   }
 }
