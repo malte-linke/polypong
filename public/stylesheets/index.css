@@ -83,8 +83,7 @@ h1 {
   margin-top: 5vh;
 }
 
-
-.btn-join, .btn-host, .btn-back{
+button {
   text-transform: uppercase;
   text-align: center;
   font-size: 20px;
@@ -103,11 +102,11 @@ h1 {
   margin-right: 5vw;
 }
 
-.btn-join:hover, .btn-host:hover, .btn-host:hover {
+button:hover {
   background-color: #08be69;
 }
 
-.btn-join:active, .btn-host:active, .btn-back:active {
+button:active {
   background-color: #3e8e41;
   box-shadow: 0 5px #194200;
   transform: translateY(4px);
