@@ -88,6 +88,24 @@ const Vec2 = {
     let x = v.x * cos - v.y * sin;
     let y = v.x * sin + v.y * cos;
     return {x: x, y: y};
+  },
+
+  getReflectionVectorAdvanced(playerRectVertices, ball, playerIndex, amountPlayers){
+    
+    let offset = PMath.getRelativePlayerBallIntersectOffset(playerRectVertices, ball, playerIndex, amountPlayers);
+
+    let reflectionVector = Vec2.getReflectionVector(ball.velocity, Vec2.subtract(playerRectVertices[1], playerRectVertices[0]));
+
+    let newReflectionVector = Vec2.rotate(reflectionVector, -offset * 45);
+
+    let playerVector = Vec2.subtract(playerRectVertices[2], playerRectVertices[1]);
+
+    let angle = Vec2.getAngle(playerVector, newReflectionVector);
+
+    if(angle > 160) Vec2.rotate(newReflectionVector, -(angle - 160));
+    if(angle < 20) Vec2.rotate(newReflectionVector, -(angle - 20));
+
+    return newReflectionVector;
   }
 }
 
@@ -186,8 +204,8 @@ const PMath = {
   },
 
 
-  getPlayerToBottomRotationAngle(playerIndex, players, canvasSize = 1){
-    let polygonVertices = PMath.getPolygonVertices(players, 0.5, canvasSize);
+  getPlayerToBottomRotationAngle(playerIndex, players){
+    let polygonVertices = PMath.getPolygonVertices(players, 0.5, 1);
     let playerSideVertices = [];
 
     if(playerIndex == players - 1){
@@ -201,6 +219,57 @@ const PMath = {
     let v2 = Vec2.subtract({x: 1, y: 0}, {x: 0, y: 0});
 
     return Vec2.getAngle(v1, v2);
+  },
+
+  getRelativePlayerBallIntersectOffset(playerRectVertices, ball, playerIndex, amountPlayers){
+
+    let angle = PMath.getPlayerToBottomRotationAngle(playerIndex, amountPlayers);
+
+    // rotate player rect vertices to player to bottom angle
+    let playerVertex1 = {x: playerRectVertices[1].x, y: playerRectVertices[1].y};
+    let playerVertex2 = {x: playerRectVertices[2].x, y: playerRectVertices[2].y};
+
+    let rotatedPlayerVertex1 = this.rotatePointAroundPivot({x: 0.5, y: 0.5}, angle, playerVertex1);
+    let rotatedPlayerVertex2 = this.rotatePointAroundPivot({x: 0.5, y: 0.5}, angle, playerVertex2);
+
+    
+    // rotate ball to player to bottom angle
+
+    ball = {x: ball.position.x, y: ball.position.y};
+
+    let rotatedBall = this.rotatePointAroundPivot({x: 0.5, y: 0.5}, angle, ball);
+
+    // get the offset of the ball to the player
+    let min = rotatedPlayerVertex1 > rotatedPlayerVertex2 ? rotatedPlayerVertex2 : rotatedPlayerVertex1;
+    let max = rotatedPlayerVertex1 > rotatedPlayerVertex2 ? rotatedPlayerVertex1 : rotatedPlayerVertex2;
+
+    let offset = ((rotatedBall.x - min.x) / (max.x - min.x)) - 0.5;
+    
+    return offset;
+  },
+
+  rotatePointAroundPivot(pivotPoint, angle, point){
+
+    //convert degrees to radians
+    angle = angle * (Math.PI / 180);
+
+    // Rotate point around pivotPoint by angle
+    let s = Math.sin(angle);
+    let c = Math.cos(angle);
+
+    // translate point back to origin:
+    point.x -= pivotPoint.x;
+    point.y -= pivotPoint.y;
+
+    // rotate point
+    let xnew = point.x * c - point.y * s;
+    let ynew = point.x * s + point.y * c;
+
+    // translate point back:
+    point.x = xnew + pivotPoint.x;
+    point.y = ynew + pivotPoint.y;
+
+    return point;
   }
 }
 
@@ -264,8 +333,6 @@ const Collision = {
     let circlePointA = {x: circle.x, y: circle.y};
     let circlePointB = {x: circleFuture.x, y: circleFuture.y};
 
-    //console.log(line, circle, circleFuture);
-
     if(this.areLinesIntersecting(linePointA, linePointB, circlePointA, circlePointB)) return true;
 
     return false;
@@ -315,15 +382,11 @@ const Collision = {
       circle.y, 
       circle.radius)) return true;
 
-    // get circle's and rect's future position
-
-    //console.log(rectVerticesFuture);
 
     // check if circle went through rect
     for (let i = 0; i < rectVerticesFuture.length; i++) {
       let linePoint2 = (i == rectVerticesFuture.length - 1) ? rectVerticesFuture[0] : rectVerticesFuture[i+1];
       if(Collision.areLinesIntersecting(rectVerticesFuture[i], linePoint2, {x: circle.x, y: circle.y}, {x: circleFuture.x, y: circleFuture.y})) return true;
-      //console.log(rectVerticesFuture[i], linePoint2, {x: circle.x, y: circle.y}, circlePosFuture);
     }
 
     return false;

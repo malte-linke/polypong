@@ -79,7 +79,7 @@ module.exports = class Game {
           this.hasNewRunData = true;
           if(b.lastCollision == i/4) continue;    
           
-          b.velocity = Vec2.getReflectionVector(b.velocity, Vec2.subtract(playerVertices[i+1], playerVertices[i]));
+          b.velocity = Vec2.getReflectionVectorAdvanced(currentPlayerVertices, b, i/4, playerRunData.length);
           b.lastCollision = i/4;
           return;
         }
@@ -170,17 +170,7 @@ module.exports = class Game {
 
 
       //add ball
-      this.runData.balls.push(
-        { 
-        position: {x: 0.5, y: 0.5} ,
-        velocity: {x: 0.008, y: -0.004},
-        radius: 0.02,
-        lastCollision: null
-        }
-      )
-
-      //this.addPlayer("abcd", 0);
-      //this.addPlayer("abcd", 0);
+      this.addBall();
     }
 
     if(num == 2){
@@ -197,14 +187,7 @@ module.exports = class Game {
 
 
     if(num == 5 && increased){
-      this.runData.balls.push(
-        { 
-        position: {x: 0.5, y: 0.5} ,
-        velocity: {x: 0.008, y: -0.004},
-        radius: 0.02,
-        lastCollision: null
-        }
-      )
+      this.addBall();
     }
 
     if(num == 5 && !increased){
@@ -215,5 +198,20 @@ module.exports = class Game {
   addWall(index = -1){
     if(index == -1) index = this.runData.players.length;
     this.runData.players.splice(index, 0, { position: 0, size: 1, width: 0.05, velocity: 0, pID: "-", isHost: false });
+  }
+
+  addBall(){
+
+    let velocity = {x: 0.008, y: -0.004};
+    velocity = Vec2.rotate(velocity, Math.random() * 360);
+
+    this.runData.balls.push(
+      { 
+      position: {x: 0.5, y: 0.5} ,
+      velocity: velocity,
+      radius: 0.02,
+      lastCollision: null
+      }
+    )
   }
 }

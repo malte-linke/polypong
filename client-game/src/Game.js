@@ -65,7 +65,7 @@
 
       //check if intersects with player
       for(let i = 0; i < playerVertices.length; i+=4){
-
+        
         // get only vertices for current player being checked
         let currentPlayerVertices = playerVertices.slice(i , i+4);
         let currentPlayerVerticesFuture = playerVerticesFuture.slice(i, i+4);
@@ -74,7 +74,7 @@
           ballCollided = true;
           if(b.lastCollision == i/4) continue;    
           
-          b.velocity = Vec2.getReflectionVector(b.velocity, Vec2.subtract(playerVertices[i+1], playerVertices[i]));
+          b.velocity = Vec2.getReflectionVectorAdvanced(currentPlayerVertices, b, i/4, playerRunData.length);
           b.lastCollision = i/4;
           return;
         }

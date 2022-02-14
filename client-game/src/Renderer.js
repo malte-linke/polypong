@@ -46,7 +46,7 @@ class Renderer {
 
     // get rotation angle so that player is always at the bottom
     let playerIndex = runData.players.indexOf(runData.players.find(p => p.pID == "you"));
-    let angle = PMath.getPlayerToBottomRotationAngle(playerIndex, runData.players.length, this.size);
+    let angle = PMath.getPlayerToBottomRotationAngle(playerIndex, runData.players.length);
 
     // rotate canvas
     this.rotateCanvas(angle);
