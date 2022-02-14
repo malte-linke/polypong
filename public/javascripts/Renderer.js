@@ -11,6 +11,8 @@ class Renderer {
 
     this.clearColor = "black";
     this.backgroundImage = document.querySelector("#background");
+
+    this.ballParticleEmitters = [];
   }
 
 
@@ -18,29 +20,47 @@ class Renderer {
   // DRAWING
   //
   render(runData){
+
     // clear canvas
     this.ctx.fillStyle = this.clearColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     if(runData == null) return;
 
-
     // draw background
     this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
     
+    
+    // center polygon
+    if(runData.players.length % 2 != 0){
+      let circumradius = 0.5;
+      let inradius = 0.5 * Math.cos(Math.PI / runData.players.length);
+
+      let totalWidth = (circumradius + inradius) * this.size;
+
+      var marginToWall = (this.size - totalWidth) / 2;
+
+      //translate canvas to left
+      this.ctx.translate(0, marginToWall);
+    }
+
+
     // get rotation angle so that player is always at the bottom
     let playerIndex = runData.players.indexOf(runData.players.find(p => p.pID == "you"));
-    let angle = PMath.getPlayerToBottomRotationAngle(playerIndex, runData.players.length, this.size)
+    let angle = PMath.getPlayerToBottomRotationAngle(playerIndex, runData.players.length, this.size);
 
     // rotate canvas
     this.rotateCanvas(angle);
 
+
     // draw
     this.drawMap(runData.players.length);
+    this.drawParticles(runData);
     this.drawBalls(runData);
     this.drawPlayers(runData.players);
 
-    // reset rotation
-    this.rotateCanvas(-angle);
+    
+    //reset canvas
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   drawMap(numPlayers){
@@ -106,8 +126,44 @@ class Renderer {
 
       this.ctx.lineTo(vertices[0].x, vertices[0].y);
 
-      this.ctx.fill();
+      //this.ctx.fill();
       this.ctx.closePath();
+
+
+      //draw particles
+
+      if(balls.length < this.ballParticleEmitters.length){
+        this.ballParticleEmitters.splice(balls.length, this.ballParticleEmitters.length - balls.length);
+      }
+
+      if(balls.length > this.ballParticleEmitters.length){
+        for(let i = this.ballParticleEmitters.length; i < balls.length; i++){
+          this.ballParticleEmitters.push(new ParticleEmitter(document.querySelector("canvas"), {
+            particleLifeTime: 50,
+            maxParticles: 100,
+            particleSizeStart: 15,
+            particleSizeEnd: 1,
+            particleColorStart: {r: 0, g: 255, b: 255, a: 255},
+            particleColorEnd: {r: 0, g: 0, b: 255, a: 255},
+            particleSpeedStart: 1,
+            particleSpeedEnd: 1,
+            particleDirection: 0,
+            particleSpread: 100,
+            emitterSize: 0,
+            emitterSpeed: 1,
+            emitterPosition: {x: -300, y: -300}
+          }));
+        }
+      }
+
+      let angle = Vec2.getAngle({x: 0, y: -1}, runData.balls[i].velocity);
+      let polygonSideLength = PMath.getPolygonSideLength(runData.players.length, 0.5);
+      this.ballParticleEmitters[i].particleSizeStart = game.runData.balls[i].radius * this.size * polygonSideLength;
+      this.ballParticleEmitters[i].particleDirection = angle + 180;
+      this.ballParticleEmitters[i].emitterPosition = {x: game.runData.balls[i].position.x * this.size, y: game.runData.balls[i].position.y * this.size};
+
+      this.ballParticleEmitters[i].update();
+      this.ballParticleEmitters[i].draw();
     }
   }
 
@@ -120,7 +176,7 @@ class Renderer {
     }
   }
 
-  
+
 
   //
   // EVENTS
