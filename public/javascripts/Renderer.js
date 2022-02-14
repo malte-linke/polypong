@@ -54,7 +54,6 @@ class Renderer {
 
     // draw
     this.drawMap(runData.players.length);
-    this.drawParticles(runData);
     this.drawBalls(runData);
     this.drawPlayers(runData.players);
 
