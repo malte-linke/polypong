@@ -3,6 +3,7 @@ const net = new NetworkManager();
 const renderer = new Renderer("canvas");
 const ui = new UI();
 const game = new Game();
+const sound = new SoundManager();
 
 
 let lastTime = Date.now();
