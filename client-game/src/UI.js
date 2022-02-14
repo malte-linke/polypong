@@ -1,5 +1,5 @@
 class UI{
-  constructor(net){
+  constructor(){
     this.hostBtn = document.querySelector('.btn-host');
     this.joinBtn = document.querySelector('.btn-join');
     this.joinInput = document.querySelector('.input-join');

@@ -79,6 +79,15 @@ const Vec2 = {
 
   abs(v) {
     return Math.sqrt(v.x * v.x + v.y * v.y);
+  },
+
+  rotate(v, degrees){
+    let radians = degrees * Math.PI / 180;
+    let cos = Math.cos(radians);
+    let sin = Math.sin(radians);
+    let x = v.x * cos - v.y * sin;
+    let y = v.x * sin + v.y * cos;
+    return {x: x, y: y};
   }
 }
 
