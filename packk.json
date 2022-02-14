@@ -1,0 +1,19 @@
+{
+  "output": "./public/javascripts/pp.min.js",
+  "prefix": "Fully packaged source code of polypong.",
+  "anonamyze": true,
+  "files": [
+    "./client-game/lib/TParticles.js",
+    "./client-game/lib/socketio.js",
+    "./client-game/lib/howler.js",
+    "./client-game/src/Utils.js",
+    "./client-game/src/Game.js",
+    "./client-game/src/SoundManager.js",
+    "./client-game/src/NetworkManager.js",
+    "./client-game/src/Renderer.js",
+    "./client-game/src/Input.js",
+    "./client-game/src/UI.js",
+    "./client-game/src/Mobile.js",
+    "./client-game/src/Main.js"
+  ]
+}
