@@ -13,6 +13,7 @@
     "./client-game/src/Renderer.js",
     "./client-game/src/Input.js",
     "./client-game/src/UI.js",
+    "./client-game/src/Mobile.js",
     "./client-game/src/Main.js"
   ]
 }
