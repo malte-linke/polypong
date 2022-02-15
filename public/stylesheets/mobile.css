@@ -1,0 +1,43 @@
+.mobile-container {
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(17, 6, 116);
+}
+
+.mobile-container button {
+  display: inline;
+  margin: 5vw 2.5vw 5vw 5vw;
+  width: calc(100% - 20vw);
+}
+.mobile-container :last-child {
+  margin: 5vw 5vw 5vw 2.5vw;
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen and (max-width : 500px) { /* TODO: improve css selector, this may not work on all devices */
+
+  .mobile-container {
+    display: flex;
+  }
+
+  /* fix host and join menu */
+  .btn-container {
+    flex-direction: column !important;
+  }
+  .btn-container input {
+    max-width: calc(80% - 10vw);
+    margin: 5vw 5vw 5vw 5vw !important;
+  }
+  .btn-container button {
+    margin: 0 !important;
+  }
+  .btn-container .btn-host {
+    margin-bottom: 5vw !important;
+  }
+
+  /* fix game status */
+  .game-status-text {
+    text-align: center;
+  }
+} 
