@@ -1,4 +1,3 @@
-const { io } = require('socket.io-client');
 var game = require('./Game');
 var { ID } = require('./Utils');
 
@@ -105,8 +104,8 @@ class NetworkManager {
 
     if(socket.pID == name) return socket.emit("changeNameResult", { successful: true });
 
-    if(name.length < 3) 
-      return socket.emit("changeNameResult", { successful: false, reason: "Name must be at least 3 characters long" });
+    if(name.length < 1) 
+      return socket.emit("changeNameResult", { successful: false, reason: "Name must be at least 1 character long" });
 
     if(this.players.map(p => p.pID).includes(name))
       return socket.emit("changeNameResult", { successful: false, reason: "Name already taken" });
