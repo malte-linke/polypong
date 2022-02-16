@@ -14,7 +14,7 @@ module.exports = {
     },
 
     // Return the server instance
-    server: server
+    getServer: () => server,
 }
 
 

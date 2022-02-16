@@ -9,8 +9,8 @@ class UI{
 
     this.pregameUIContainer = document.querySelector(".pregame-ui-container");
 
-
-    this.setLandingState();
+    if(gID) this.setNameState("join");
+    else    this.setLandingState();
   }
 
   //
@@ -109,12 +109,15 @@ class UI{
       return;
     }
 
+    if(gID) return net.joinGame(gID);
+
     if(this.currentState == "name-join") this.setJoinState();
     else if(this.currentState == "name-host") this.setHostState();
   }
 
   joinGameResult(result){
     if(!result.successful){
+      if(gID) return location.reload();
       this.gameStatusText.innerHTML = result.reason;
       this.gameStatusText.style.visibility = "visible";
       return;

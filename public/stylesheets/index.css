@@ -9,6 +9,7 @@
 * {
   padding: 0px;
   margin: 0px;
+  font-family: 'Press Start 2P', cursive;
 }
 
 *:focus {
@@ -28,6 +29,10 @@ h1 {
   font-size: 2.4em;
   text-align: center;
   animation: name 3s infinite linear;
+}
+
+span {
+  text-align: center;
 }
 
 @keyframes name{
