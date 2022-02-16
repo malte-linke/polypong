@@ -102,6 +102,8 @@ class NetworkManager {
 
   changeNameHandler(socket, name){
 
+    name = name.toLowerCase();
+
     if(socket.pID == name) return socket.emit("changeNameResult", { successful: true });
 
     if(name.length < 1) 
@@ -147,6 +149,8 @@ class NetworkManager {
 
   createGameHandler(socket, gID){
 
+    gID = gID.toLowerCase();
+
     // check if id is valid
     if(this.games.map(g => g.gID).includes(gID)) 
       return socket.emit("createResult", { successful: false, reason: "Lobby name already taken" });
@@ -168,6 +172,8 @@ class NetworkManager {
   }
 
   joinGameHandler(socket, gID){
+
+    gID = gID.toLowerCase();
 
     // check if player already in game
     if(socket.gID != null) return socket.emit("joinResult", { successful: false, reason: "Already in a game. How did u even do this?" });
