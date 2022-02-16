@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npm run package && node ./bin/www",
+    "start": "node ./bin/www",
     "pstart": "../../bin/nodeJS/node ./bin/www",
     "package": "packk packk.json"
   },
