@@ -188,7 +188,7 @@ class NetworkManager {
     // send result to player
     socket.emit("joinResult", { successful: true });
 
-    console.log(`Player ${socket.pID} joined Game ${gID}`);
+    console.log(`[~] Player ${socket.pID} joined Game ${gID}`);
   }
 
   inputHandler(socket, dir){
