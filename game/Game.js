@@ -157,47 +157,37 @@ module.exports = class Game {
     EVERYTHING IN THIS METHOD IS FOR TESTING PURPOSES ONLY
     */
 
-    let num = this.runData.players.filter(p => p.pID.length >= 3).length;
+    let num = this.runData.players.filter(p => !p.isWall).length;
 
     if(num == 0) this.runData.balls = [];
 
     if(num == 1){
       //remove all walls
-      this.runData.players = this.runData.players.filter(p => p.pID.length >= 3);
+      this.runData.players = this.runData.players.filter(p => !p.isWall);
       this.addWall();
       this.addWall();
       this.addWall();
-
 
       //add ball
-      this.addBall();
+      if(increased) this.addBall();
     }
 
     if(num == 2){
       //remove all walls
-      this.runData.players = this.runData.players.filter(p => p.pID.length >= 3);
+      this.runData.players = this.runData.players.filter(p => !p.isWall);
       this.addWall(1);
       this.addWall(3);
     }
 
     if(num == 3){
       //remove all walls
-      this.runData.players = this.runData.players.filter(p => p.pID.length >= 3);
-    }
-
-
-    if(num == 5 && increased){
-      this.addBall();
-    }
-
-    if(num == 5 && !increased){
-      this.runData.balls.pop();
+      this.runData.players = this.runData.players.filter(p => !p.isWall);
     }
   }
 
   addWall(index = -1){
     if(index == -1) index = this.runData.players.length;
-    this.runData.players.splice(index, 0, { position: 0, size: 1, width: 0.05, velocity: 0, pID: "-", isHost: false });
+    this.runData.players.splice(index, 0, { position: 0, size: 1, width: 0.05, velocity: 0, pID: "-", isHost: false, isWall: true });
   }
 
   addBall(){
