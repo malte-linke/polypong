@@ -7,8 +7,6 @@ const url = require('url');
 const dirname = require('path').dirname;
 const join = require('path').join;
 
-console.log("loaded");
-
 var imports = {};
 
 /**
@@ -124,7 +122,6 @@ module.exports = function(options) {
     };
 
     if (req.method !== 'GET' && req.method !== 'HEAD') {
-      console.log("wot4");
       return next();
     }
 
@@ -202,12 +199,10 @@ module.exports = function(options) {
 
       function doneWriting() {
         if (!cssDone || !sourceMapDone) {
-          console.log("wot");
           return;
         }
 
         if (options.response === false) {
-          console.log("wot2");
           return next(sassMiddlewareError);
         }
 
@@ -215,7 +210,6 @@ module.exports = function(options) {
           'Content-Type': 'text/css',
           'Cache-Control': 'max-age=' + maxAge
         });
-        console.log(data);
         res.end(data);
       }
 
@@ -320,7 +314,6 @@ module.exports = function(options) {
           }
 
           error(err);
-          console.log("wot3");
           return next(err);
         }
 
