@@ -19,6 +19,9 @@
     "socket.io-client": "^4.4.0",
     "uglify-js": "^3.15.1"
   },
+  "settings": {
+    "morgan": false
+  },
   "engines": {
     "node": "16.14"
   }

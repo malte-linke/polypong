@@ -4,20 +4,18 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('./middleware/sass-middleware');
-
 var indexRouter = require('./routes/index');
-
 var app = express();
 
+var settings = require('./package.json').settings;
 
-app.use(logger('dev'));
+if (settings.morgan) app.use(logger('dev'));
 app.use(express.json());
 app.use(sassMiddleware({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, '.cache'),
   indentedSyntax: false, // true = .sass and false = .scss
   sourceMap: true, // TODO: remove in production
-  debug: true,
 }));
 
 // view engine setup
