@@ -12,6 +12,7 @@
     "./public/javascripts/src/NetworkManager.js",
     "./public/javascripts/src/Renderer.js",
     "./public/javascripts/src/Input.js",
+    "./public/javascripts/src/Changelog.js",
     "./public/javascripts/src/UI.js",
     "./public/javascripts/src/Mobile.js",
     "./public/javascripts/src/Main.js"

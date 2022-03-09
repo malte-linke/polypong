@@ -1,0 +1,43 @@
+.changelog-container {
+  // This is necessary to make the canvas fullscreen and centered,
+  // because the previous css code is basically trash. Sorry Felix.
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .changelog-body {
+    display: block;
+    height: 50vh;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1em;
+    width: 50em;
+    border-radius: 0.5em;
+    overflow: auto;
+
+    .release:not(:last-child) {
+      margin-bottom: 1em;
+    }
+
+    .release {
+      .release-title {
+        margin-bottom: .5em;
+      }
+
+      .release-body ul {
+        list-style-position: outside;
+        list-style-type: "> ";
+        line-height-step: 1.5;
+        margin-left: 2em;
+      }
+    }
+  }
+}

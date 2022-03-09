@@ -28,24 +28,51 @@
   <img id="background" src="/images/bg1.png" alt="background" style="display: none;">
 
   <div class="pregame-ui-container">
-    <div class="title-container">
-      <h1>Poly-Pong</h1>
+    <div class="menu-container">
+      <div class="title-container">
+        <h1>Poly-Pong</h1>
+      </div>
+    
+      <div class="text-container">
+        <span class="game-status-text">EMPTY</span>
+      </div>
+    
+      <div class="btn-container">
+        <input class="input-join" placeholder="INVITE CODE">
+        <button class="btn-host">HOST</button>
+        <button class="btn-join">JOIN</button>
+      </div>
+    
+      <div class="btn-container">
+        <button class="btn-changelog">What's New</button>
+        <button class="btn-back">BACK</button>
+      </div>
     </div>
-  
-    <div class="text-container">
-      <span class="game-status-text">EMPTY</span>
-    </div>
-  
-    <div class="btn-container">
-      <input class="input-join" placeholder="INVITE CODE">
-      <button class="btn-host">HOST</button>
-      <button class="btn-join">JOIN</button>
-    </div>
-  
-    <div class="btn-container">
-      <button class="btn-back">BACK</button>
+
+    <div class="changelog-container hidden">
+      <div class="changelog-header">
+        <h1>What's New</h1>
+      </div>
+      <div class="changelog-body">
+        <% for(let i = 0; i < releases.length; i++) { %>
+          <div class="release">
+            <div class="release-title">
+              <a href="<%- releases[i].url %>">
+                <h2><%= releases[i].name %></h2>
+              </a>
+            </div>
+            <div class="release-body">
+              <%- releases[i].description.html %>
+            </div>
+          </div>
+        <% } %>
+      </div>
+      <div class="changelog-footer">
+        <button class="btn-back">BACK</button>
+      </div>
     </div>
   </div>
+
   <div class="canvas-container">
     <canvas id="canvas"></canvas>
 
