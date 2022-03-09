@@ -2,6 +2,7 @@
 const net = new NetworkManager();
 const renderer = new Renderer("canvas");
 const ui = new UI();
+const cl = new Changelog();
 const game = new Game();
 const sound = new SoundManager();
 
