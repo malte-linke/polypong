@@ -55,6 +55,7 @@ class NetworkManager {
     }
 
     socket.pID = pID;
+    socket.playerName = pID;
     socket.gID = null;
 
     this.players.push(socket);
@@ -85,11 +86,11 @@ class NetworkManager {
       //try catch in case player disconnects
       try{
         sockets.forEach(p => {
-          // sets your own pID to "you"
+          // marks player as self 
           let currentPlayer = runData.players.find(_p => _p.pID == p.pID);
-          currentPlayer.pID = "you";
+          currentPlayer.self = true;
           p.emit("runData", runData);
-          currentPlayer.pID = p.pID;
+          delete currentPlayer.self;
         });
       }catch(e){}
     });
@@ -104,16 +105,13 @@ class NetworkManager {
 
     name = name.toLowerCase();
 
-    if(socket.pID == name) return socket.emit("changeNameResult", { successful: true });
+    if(socket.playerName == name) return socket.emit("changeNameResult", { successful: true });
 
     if(name.length < 1) 
       return socket.emit("changeNameResult", { successful: false, reason: "Name must be at least 1 character long" });
-
-    if(this.players.map(p => p.pID).includes(name))
-      return socket.emit("changeNameResult", { successful: false, reason: "Name already taken" });
-
+      
     console.log(`[#] Player ${socket.pID} changed name to ${name}`);
-    socket.pID = name;
+    socket.playerName = name;
     socket.emit("changeNameResult", { successful: true });
   }
 
@@ -123,7 +121,7 @@ class NetworkManager {
 
     this.players = this.players.filter(p => p.pID != socket.pID);
     
-    console.log(`[-] Player ${socket.pID} disconnected`);
+    console.log(`[-] Player ${socket.playerName} disconnected`);
   }
 
   leaveGameHandler(socket, _){
@@ -137,7 +135,11 @@ class NetworkManager {
 
     socket.gID = null;
 
-    console.log(`[~] Player ${socket.pID} left the game ${game.gID}`);
+    console.log(`[~] Player ${socket.playerName} left the game ${game.gID}`);
+
+    // broadcast to room and then remove
+    socket.to(game.gID).emit("playerLeave", socket.playerName);
+    socket.leave(game.gID);
 
     //close if host left (for now)
     if(shouldClose){
@@ -193,7 +195,11 @@ class NetworkManager {
     // send result to player
     socket.emit("joinResult", { successful: true });
 
-    console.log(`[~] Player ${socket.pID} joined Game ${gID}`);
+    console.log(`[~] Player ${socket.playerName} joined Game ${gID}`);
+
+    // add to socket room and then broadcast join
+    socket.join(gID);
+    socket.to(game.gID).emit("playerJoin", socket.playerName);
   }
 
   inputHandler(socket, dir){

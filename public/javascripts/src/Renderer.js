@@ -12,7 +12,11 @@ class Renderer {
     this.clearColor = "black";
     this.backgroundImage = document.querySelector("#background");
 
+    this.mapRadius = 0.5;
+
     this.ballParticleEmitters = [];
+
+    this.notifications = [];
   }
 
 
@@ -28,7 +32,7 @@ class Renderer {
 
     // draw background
     this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
-    
+
     
     // center polygon
     if(runData.players.length % 2 != 0){
@@ -43,10 +47,15 @@ class Renderer {
       this.ctx.translate(0, marginToWall);
     }
 
+    this.darkenPlayingField(runData.players);
+
+
+    // notifications
+    this.renderNotifications();
+
 
     // get rotation angle so that player is always at the bottom
-    let playerIndex = runData.players.indexOf(runData.players.find(p => p.pID == "you"));
-    let angle = PMath.getPlayerToBottomRotationAngle(playerIndex, runData.players.length);
+    let angle = this.getPlayerToBottomRotationAngle(runData.players);
 
     // rotate canvas
     this.rotateCanvas(angle);
@@ -58,14 +67,13 @@ class Renderer {
     this.drawPlayers(runData.players);
 
     
-    //reset canvas
+    // reset canvas
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   drawMap(numPlayers){
 
-    let r = 0.5;
-    let vertices = PMath.getPolygonVertices(numPlayers, r, this.size);
+    let vertices = PMath.getPolygonVertices(numPlayers, this.mapRadius, this.size);
 
   
     // draw polygon
@@ -81,23 +89,6 @@ class Renderer {
 
     this.ctx.stroke();
     this.ctx.closePath();
-
-
-    // make playing field darker
-    this.ctx.strokeStyle = "#000";
-    this.ctx.globalAlpha = 0.8
-    this.ctx.beginPath();
-    this.ctx.moveTo(vertices[0].x, vertices[0].y);
-
-    for(let i = 1; i < vertices.length; i++){
-      this.ctx.lineTo(vertices[i].x, vertices[i].y);
-    }
-
-    this.ctx.lineTo(vertices[0].x, vertices[0].y);
-
-    this.ctx.fill();
-    this.ctx.closePath();
-    this.ctx.globalAlpha = 1
   }
 
   drawBalls(runData){
@@ -176,6 +167,38 @@ class Renderer {
   }
 
 
+  displayPlayerNotification(text){
+    this.notifications.forEach(notif => {
+      notif.position.y -= 30;
+    });
+    
+    this.notifications.push({text: text.toUpperCase(), frame: 0, opacity: 1, position: {x: this.canvas.width/2, y: this.canvas.height/2}});
+  }
+
+  renderNotifications(){
+
+    // Update 
+    this.notifications.forEach(notif => {
+      notif.frame++;
+      
+      if(notif.frame > 100){
+        notif.opacity -= 0.02;
+      }
+    });
+
+    // Remove if finished
+    this.notifications = this.notifications.filter(notif => notif.opacity > 0);
+
+    // Render
+    this.ctx.font = "15px 'Press Start 2P', cursive"
+    this.ctx.textAlign = "center";
+    this.notifications.forEach(notif => {
+      this.ctx.fillStyle = `rgba(255, 255, 255, ${notif.opacity})`;
+      this.ctx.fillText(notif.text, notif.position.x, notif.position.y);
+    });
+  }
+
+
 
   //
   // EVENTS
@@ -210,5 +233,38 @@ class Renderer {
     this.ctx.lineTo(a.x, a.y);
     this.ctx.fill();
     this.ctx.closePath();
+  }
+
+  darkenPlayingField(players){
+
+    let angle = this.getPlayerToBottomRotationAngle(players);
+
+    let vertices = PMath.getPolygonVertices(players.length, this.mapRadius, this.size);
+
+    this.rotateCanvas(angle);
+
+    // make playing field darker
+    this.ctx.strokeStyle = "#000";
+    this.ctx.fillStyle = "#000";
+    this.ctx.globalAlpha = 0.8
+    this.ctx.beginPath();
+    this.ctx.moveTo(vertices[0].x, vertices[0].y);
+
+    for(let i = 1; i < vertices.length; i++){
+      this.ctx.lineTo(vertices[i].x, vertices[i].y);
+    }
+
+    this.ctx.lineTo(vertices[0].x, vertices[0].y);
+
+    this.ctx.fill();
+    this.ctx.closePath();
+    this.ctx.globalAlpha = 1
+
+    this.rotateCanvas(-angle);
+  }
+
+  getPlayerToBottomRotationAngle(players){
+    let playerIndex = players.indexOf(players.find(p => p.self));
+    return PMath.getPlayerToBottomRotationAngle(playerIndex, players.length);
   }
 }

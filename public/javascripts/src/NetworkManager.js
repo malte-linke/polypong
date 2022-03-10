@@ -12,6 +12,8 @@ class NetworkManager {
     this.socket.on('runData', this.runDataHandler);
     this.socket.on('leaveResult', this.leaveResultHandler);
     this.socket.on('changeNameResult', this.changeNameResultHandler);
+    this.socket.on('playerLeave', this.playerDisconnectHandler);
+    this.socket.on('playerJoin', this.playerConnectHandler);
   }
 
 
@@ -57,4 +59,12 @@ class NetworkManager {
   runDataHandler(runData){
     game.runData = runData;
   } 
+
+  playerDisconnectHandler(pID){
+    renderer.displayPlayerNotification(`${pID} left the game`);
+  }
+
+  playerConnectHandler(pID){
+    renderer.displayPlayerNotification(`${pID} joined the game`);
+  }
 }
