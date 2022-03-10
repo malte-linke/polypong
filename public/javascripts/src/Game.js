@@ -76,6 +76,7 @@
           
           b.velocity = Vec2.getReflectionVectorAdvanced(currentPlayerVertices, b, i/4, playerRunData.length);
           b.lastCollision = i/4;
+          sound.play("player_hit"); 
           return;
         }
       }
@@ -92,6 +93,7 @@
         if(Collision.areCircleLineIntersectingPredictive(line, ball, ballFuture)){
           b.position.x = 0.5;
           b.position.y = 0.5;
+          sound.play("enemy_hit");
           return;
         }
       }
@@ -101,6 +103,7 @@
       if(b.position.x < 0 || b.position.x > 1 || b.position.y < 0 || b.position.y > 1){
         b.position.x = 0.5;
         b.position.y = 0.5;
+        sound.play("enemy_hit"); 
       }
     }
   }
