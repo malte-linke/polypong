@@ -125,7 +125,7 @@ module.exports = function(options) {
       return next();
     }
 
-    var path = req.url;
+    var path = decodeURI(req.url);
 
     if (!/\.css$/.test(path) && !/\.css\.map$/.test(path)) {
       log('debug', 'skip', path, 'nothing to do');
